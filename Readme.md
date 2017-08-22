@@ -27,6 +27,7 @@ List of required components in order to build your unit
 
 - The Main PCB produced by us. You can order on the www.Beat707.com site.
 - USB Power for the Main PCB.
-- The components required by the board above. Specially the ATmega328 IC and the Flash Memory IC. The ATmega328 runs with the internal Osscillator at 8Mhz and 3.3 VCC operation.
+- The components required by the board above. Specially the ATmega328 IC and the Flash Memory IC. The ATmega328 runs with the internal Oscillator at 8Mhz and 3.3 VCC operation.
 - 3 x TM1638 boards such as this one: https://github.com/Beat707/Beat707-NXT/blob/master/Hardware/TM1638.jpg or from eBay: http://www.ebay.com/itm/400985462447
 - A MIDI Cable and a MIDI compatible unit to produce some Audio. EG: a synth keyboard or a sound module. As the Beat707 NXT unit itself only produces MIDI, NOT Audio.
+- To program the ATmega328 you will also need some sort of ISP programmer. Ordering an UNO based ATmega328 won't do, as it requires 5V and 16Mhz external oscillator to run. The easy way is to order an Arduino UNO and the USB Tiny ISP programmer to program the ATmega328 on the UNO, changing it to run on 3.3V and internal 8Mhz Oscillator.
