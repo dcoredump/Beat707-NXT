@@ -31,6 +31,10 @@ How The Software Works
 - The first board is the main interface. Where it shows the Tempo in BPM and the current Pattern. The top leds, first 4 leds show the beat position and the last 4 leds shows the ABCD pattern variation. Also, beats will blink to bottom dot of the 4th digit from left to right.
 - Still in the first board, the first button is Play, second button is Stop. 3rd is - and 4th is +. 5th, when hold, let you force a step to Max, Min or Accent. 6th button, if you press and release, will alternate mirror mode, where all ABCD variations will be edited at once, or not, when disabled. You can also hold it and select the first 4 buttons on the second board to select ABCD variations directly. The 7th button, if you press and release, will go to the next pattern. If you hold, it will show the current selected pattern on the two other boards LEDs. The final button, the 8th one, is for selecting the track been edited. If you select a track twice, it will go to the Note Track, instead of Drum Track.
 - Holding button #5 from the first board and selecting the button #7, will open the pattern menu: copy, paste, init. Or selecting button #8 will open the global settings menu.
+- Adding steps is easy, just click to turn On or Off. By default when you turn a step On it will use the Accent track (last track). Or you can hold button #5 from the left board and turn a step On: Max, Min and Accent. Holding a step will turn the Double-Step On/Off. The Double-Step uses the same velocity as the regular step it is on. Double-Steps are 1/32 steps.
+- The Slide option for the notes work like this: regular notes will turn the previous note Off before turning the new step note On. When Slide is activated for the step, the new Step note On will come Before the previous Step Note Off. So if the target MIDI device supports Glide/Slide it will do just that.
+
+--------------------------------------------------------------------------------
 
 Global Options Menu
 -------------------
@@ -50,6 +54,11 @@ First Board (from the left).
           t
 ```
 
+--------------------------------------------------------------------------------
+
+Pattern Menu
+------------
+- Just click the button next to the option you want: Copy, Paste and Init. Or hit the button #5 again to exit.
 
 --------------------------------------------------------------------------------
 
@@ -76,6 +85,8 @@ Interface Overview
             s
 ```
 
+--------------------------------------------------------------------------------
+
 Hold Button #5 and Press Button #8, from the first board on the left.
 
 ```
@@ -84,6 +95,8 @@ Hold Button #5 and Press Button #8, from the first board on the left.
           +_____+
              Global Options Menu.
 ```
+
+--------------------------------------------------------------------------------
 
 Hold Button #5 and Press Button #7, from the first board on the left.
 
