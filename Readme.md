@@ -45,9 +45,9 @@ First Board (from the left).
   1 2 3 4 5 6 7 8 
   ---------------
       - + E   < >
-	      x
-		  i
-		  t
+          x
+          i
+          t
 ```
 
 
@@ -65,15 +65,15 @@ Interface Overview
   y p     u D t c    p p p p p p p p  p p p p p p p p
               e k  
           A V r      0 0 0 0 0 0 0 0  0 1 1 1 1 1 1 1
-	      c a n      1 2 3 4 5 6 7 8  9 0 1 2 3 4 5 6
-	      c r
-	      e i
-	      n a
-	      t t
-		    i
-			o
-			n
-			s
+          c a n      1 2 3 4 5 6 7 8  9 0 1 2 3 4 5 6
+          c r
+          e i
+          n a
+          t t
+            i
+            o
+            n
+            s
 ```
 
 Hold Button #5 and Press Button #8, from the first board on the left.
@@ -82,7 +82,7 @@ Hold Button #5 and Press Button #8, from the first board on the left.
   1 2 3 4 5 6 7 8 
   ---------------
           +_____+
-		     Global Options Menu.
+             Global Options Menu.
 ```
 
 Hold Button #5 and Press Button #7, from the first board on the left.
@@ -91,7 +91,7 @@ Hold Button #5 and Press Button #7, from the first board on the left.
   1 2 3 4 5 6 7 8
   ---------------  
           +___+
-		     Pattern Menu: Copy, Paste and Init.
+            Pattern Menu: Copy, Paste and Init.
 ```
 
 --------------------------------------------------------------------------------
