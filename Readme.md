@@ -5,6 +5,8 @@ created by William (Guilherme) Kalfelz (c) 2017
 
 www.Beat707.com - www.Wusik.com - www.Kalfelz.com
 
+Support us on Patreon: https://patreon.com/williamk
+
 --------------------------------------------------------------------------------
 
 MIDI Groove Sequencer
@@ -32,3 +34,33 @@ List of required components in order to build your unit
 - A MIDI Cable and a MIDI compatible unit to produce some Audio. EG: a synth keyboard or a sound module. As the Beat707 NXT unit itself only produces MIDI, NOT Audio.
 - To program the ATmega328 you will also need some sort of ISP programmer. Ordering an UNO based ATmega328 won't do, as it requires 5V and 16Mhz external oscillator to run. The easy way is to order an Arduino UNO and the USB Tiny ISP programmer to program the ATmega328 on the UNO, changing it to run on 3.3V and internal 8Mhz Oscillator.
 - The Flash memory is the Winbond W25Q64 BVAIG - DIP
+
+--------------------------------------------------------------------------------
+
+Connecting the boards
+---------------------
+
+- From the Main PCB you can see the Main Header, which starts from the top: 5V+, Ground, STB (Strobe), CLK (Clock), Data 1, data 2 and Data 3.
+- Now, the first 4 pins are shared on all the 3 x TM1638 boards. While Data 1 is for the first board (on the left) DIO pin, data 2 is for the middle board DIO pin and finally Data 3 for the last (on the right) board DIO pin.
+- The best thing is to remove the J1 headers from the TM1638 boards and just pass wires from behind the board.
+
+--------------------------------------------------------------------------------
+
+BOM (Build Of Materials) List for the Main PCB
+----------------------------------------------
+- 1x ATmega328P-PU DIP - 8-Bit Microcontroller
+- 1x W25Q64 DIP - 8Mbit Flash Memory Chip
+- 1x 4N35 DIP - Octopler
+- 1x 1k Ohm Resistor
+- 1x 10k Ohm Resistor
+- 1x 200 Ohm Resistor
+- 1x 10 Ohm Resistor
+- 1x 33 Ohm Resistor
+- 1x 1N4748 Diode
+- 2x Female Din-5 - MIDI Connector
+- 1x 47uf Electrolitic Capacitor
+- 2x 100nh Ceramic Capacitor
+- 1x LD33V - 3.3V Voltage Regulator
+- 1x Female USB-B Connector
+- 3x Jumpers
+- 6x Male Headers for the FTDI Connection
