@@ -129,6 +129,17 @@ Connecting the boards
 - Now, the first 4 pins are shared on all the 3 x TM1638 boards. While Data 1 is for the first board (on the left) DIO pin, data 2 is for the middle board DIO pin and finally Data 3 for the last (on the right) board DIO pin.
 - The best thing is to remove the J1 headers from the TM1638 boards and just pass wires from behind the board.
 
+Main Header
+-----------
+
+- 5V+
+- GND (Ground)
+- STB (Strobe)
+- CLK (Clock)
+- Data 1 (board on the left)
+- Data 2 (middle board)
+- Data 3 (board on the right)
+
 --------------------------------------------------------------------------------
 
 BOM (Build Of Materials) List for the Main PCB
