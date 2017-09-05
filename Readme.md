@@ -18,7 +18,7 @@ MIDI Groove Sequencer
 - 30 Songs.
 - 64 Patterns per Song.
 - 16 Steps on screen, plus ABCD variations for a total of 64 steps.
-- Double Steps (in between steps option when editing the steps).
+- Double Steps (in between steps option when editing the steps). Steps are 1/16 and Double-Steps are 1/32.
 - MIDI Processor Per Track. EG: Fade In, Fade Out, Fade InOut, Fade OutInt, Random Velocity and more.
 - Simple Hardware design, based on the easy to find TM1638 IC based boards. Just search on eBay and you should be able to find several options. We used 3 boards that has 8 x buttons, 8 x LEDs and 8 x LED_Segments. The board uses a single ATmega328 running at 3.3V, one FLASH chip for storage and connections for the TM1638 boards.
 - MIDI Input and Output, with Clock Send and Receive (Slave mode too).
@@ -129,16 +129,16 @@ Connecting the boards
 - Now, the first 4 pins are shared on all the 3 x TM1638 boards. While Data 1 is for the first board (on the left) DIO pin, data 2 is for the middle board DIO pin and finally Data 3 for the last (on the right) board DIO pin.
 - The best thing is to remove the J1 headers from the TM1638 boards and just pass wires from behind the board.
 
-Main Header
------------
+Main Header (top to bottom)
+---------------------------
 
 - 5V+
 - GND (Ground)
 - STB (Strobe)
 - CLK (Clock)
-- Data 1 (board on the left)
-- Data 2 (middle board)
-- Data 3 (board on the right)
+- Data 1 (DIO pin from the board on the left)
+- Data 2 (DIO pin from the middle board)
+- Data 3 (DIO pin from the board on the right)
 
 --------------------------------------------------------------------------------
 
