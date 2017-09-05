@@ -12,9 +12,9 @@ Support us on Patreon: https://patreon.com/williamk
 MIDI Groove Sequencer
 ---------------------
 
-- 16 Drum Tracks (note on/off, 3 velocity values).
+- 15 Drum Tracks (note on/off, 3 velocity values).
 - 1 Accent Track. But each step can be set: Accent Track, Min or Max.
-- 8 Note Tracks (note number, 3 velocity values). Steps have the option of Slide and Note Off.
+- 8 Note Tracks (note number, 3 velocity values). Steps have the option of Slide, Double and Note Off.
 - 30 Songs.
 - 64 Patterns per Song.
 - 16 Steps on screen, plus ABCD variations for a total of 64 steps.
