@@ -23,7 +23,7 @@ enum
   midiNoteOn = 0x90, midiNoteOff = 0x80, midiCC = 0xB0, midiChannels=16,
   patternMode = 0, songMode,
   accentTrack = (DRUM_TRACKS-1),
-  procFadeMin = 4, lastMenu = 9,
+  procFadeMin = 4, lastMenu = 10,
   kLeftMain = 0
 };
 
@@ -71,6 +71,7 @@ byte prevPlayedNote[NOTE_TRACKS];
 byte menuPosition = 0;
 byte currentMode = patternMode;
 byte songPosition = 0;
+byte initMode = 0;
 //
 struct WSTEPS
 {
@@ -134,7 +135,7 @@ void setup()
   startMIDIinterface(false);
   initTM1638();
   reset();
-  flashInit();
+  flashInit(false);
   //
   #if SHOW_FREE_RAM
     freeMemory();

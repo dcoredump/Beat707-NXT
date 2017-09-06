@@ -28,13 +28,13 @@
 #define FLASH_VERSION '1'
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-void flashInit()
+void flashInit(bool force)
 {
   if (!flash.begin(FLASH_CHIPSIZE)) { showErrorMsg(1); }
   //
   char header[6];
   if (!flash.readAnything(0, (uint8_t) 0, header)) showErrorMsg(flash.error());
-  if (header[0] != 'B' || header[1] != '7' || header[2] != '0' || header[3] != '7' || header[4] != 'V' || header[5] != FLASH_VERSION)
+  if (force || header[0] != 'B' || header[1] != '7' || header[2] != '0' || header[3] != '7' || header[4] != 'V' || header[5] != FLASH_VERSION)
   {
     showWaitMsg(-1);
     bool sectorErase = false;
@@ -42,32 +42,12 @@ void flashInit()
     int porc = 0;
     //
     // Start Saving Songs/Patterns //
-    uint16_t pagePos = 16;
     for (byte x = 0; x < SONGS; x++) // songs
     {
-      if (sectorErase && !flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());
-      if (!flash.writeAnything(pagePos, (uint8_t) 0, configData)) showErrorMsg(flash.error()+10);
-      pagePos++;
-      if (!flash.writeAnything(pagePos, (uint8_t) 0, songData)) showErrorMsg(flash.error()+20);
-      pagePos += 15;
-      //
-      for (byte p = 0; p < 64; p ++)
-      {
-        if (sectorErase && !flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());
-        if (!flash.writeAnything(pagePos, (uint8_t) 0, patternData)) showErrorMsg(flash.error()+30);
-        pagePos++;
-        if (!flash.writeAnything(pagePos, (uint8_t) 0, stepsData)) showErrorMsg(flash.error()+40);
-        pagePos += 15;
-        porc++;
-        showWaitMsg(byte(porc / 20));
-      }
+      initSong(x, sectorErase, porc, false);
     }
-    // Reset the Copy/Paste Area //
-    if (sectorErase && !flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());
-    if (!flash.writeAnything(pagePos, (uint8_t) 0, stepsData)) showErrorMsg(flash.error()+60);
-    //
     // Reset the Init Area //
-    pagePos += 16;
+    uint16_t pagePos = 16 + (SONGS * ((64 * 16) + 16));
     if (sectorErase && !flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());
     if (!flash.writeAnything(pagePos, (uint8_t) 0, stepsData)) showErrorMsg(flash.error()+80);
     //
@@ -87,6 +67,30 @@ void flashInit()
   //
   loadSong(0);
 }
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void initSong(byte song, bool sectorErase, int &porc, bool songOnly)
+{
+  uint16_t pagePos = 16 + (song * ((64 * 16) + 16));
+  //
+  if (sectorErase && !flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());
+  if (!flash.writeAnything(pagePos, (uint8_t) 0, configData)) showErrorMsg(flash.error()+10);
+  pagePos++;
+  if (!flash.writeAnything(pagePos, (uint8_t) 0, songData)) showErrorMsg(flash.error()+20);
+  pagePos += 15;
+  //
+  for (byte p = 0; p < 64; p ++)
+  {
+    if (sectorErase && !flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());
+    if (!flash.writeAnything(pagePos, (uint8_t) 0, patternData)) showErrorMsg(flash.error()+30);
+    pagePos++;
+    if (!flash.writeAnything(pagePos, (uint8_t) 0, stepsData)) showErrorMsg(flash.error()+40);
+    pagePos += 15;
+    porc++;
+    if (songOnly) showWaitMsg(porc * 2); else showWaitMsg(byte(porc / 20));
+  } 
+}
+
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void loadPattern(byte pattern, bool force = false)

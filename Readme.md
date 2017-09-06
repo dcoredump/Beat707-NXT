@@ -65,6 +65,21 @@ First Board (from the left).
           t
 ```
 
+Options
+-------
+
+- MIDI Channel
+- MIDI Note Number (for Drum Tracks)
+- MIDI Accent Value 1
+- MIDI Accent Value 2
+- MIDI Accent Value 3
+- MIDI Processor for the current track
+- Pattern Variations: ABCD (each variation has 16 steps)
+- MIDI Sync Out: On/Off
+- Current Song
+- Initialize: None, Current Song or ALL (WARNING!) - hit any STEP key to start
+- To Song Mode - hit + or - to go
+
 --------------------------------------------------------------------------------
 
 Hold Button #5 and Press Button #7, from the first board on the left.

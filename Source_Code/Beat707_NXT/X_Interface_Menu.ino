@@ -221,7 +221,34 @@ void showMenu()
             printNumber(2, 5, currentSong + 1);
     break;
     //
-    case 9: segments[1][1] = S_T;
+    case 9: segments[1][4] = S_I;
+            segments[1][5] = S_N;
+            segments[1][6] = S_I;
+            segments[1][7] = S_T;
+            //
+            if (initMode == 0)
+            {
+              segments[2][4] = S_N;
+              segments[2][5] = S_O;
+              segments[2][6] = S_N;
+              segments[2][7] = S_E;
+            }
+            else if (initMode == 1)
+            {
+              segments[2][4] = S_S;
+              segments[2][5] = S_O;
+              segments[2][6] = S_N;
+              segments[2][7] = S_G;
+            }
+            else
+            {
+              segments[2][5] = S_A;
+              segments[2][6] = S_L;
+              segments[2][7] = S_L;              
+            }
+    break;
+    //
+    case 10: segments[1][1] = S_T;
             segments[1][2] = S_O;
             //
             segments[1][4] = S_S;
@@ -296,6 +323,11 @@ void processMenu(char value)
     break;
     //
     case 9:
+      if (value > 0 && initMode < 2) initMode++;
+      else if (value < 1 && initMode > 0) initMode--;
+    break;    
+    //
+    case 10:
       if (!seqPlaying)
       {
         checkIfDataNeedsSaving();
@@ -305,7 +337,6 @@ void processMenu(char value)
       }
     break;
   }
-  
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

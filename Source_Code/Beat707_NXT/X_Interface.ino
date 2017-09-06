@@ -522,7 +522,28 @@ void checkInterface()
     //
     if (leButton >= 0)
     {
-      if (curRightScreen == kRightTrackSelection ||  curRightScreen == kRightMenu)
+      if (curRightScreen == kRightMenu && menuPosition == 9)
+      {
+        if (initMode == 1)
+        {
+          stopSequencer();
+          reset();
+          int porc = 0;
+          initSong(currentSong, true, porc, true);
+          loadSong(currentSong);
+          checkMenuClose();
+        }
+        else if (initMode == 2)
+        {
+          stopSequencer();
+          reset();
+          currentSong = 0;
+          flashInit(true);
+          checkMenuClose();
+        }
+        else checkMenuClose();
+      }
+      else if (curRightScreen == kRightTrackSelection ||  curRightScreen == kRightMenu)
       {
         editingNote = false;
         //
@@ -602,12 +623,13 @@ void checkInterface()
     if (curRightScreen == kRightMenu)
     {
       menuPosition++;
+      initMode = 0;
       if (menuPosition > lastMenu) menuPosition = 0;
     }
     else if (forceAccent)
     {
       curRightScreen = kRightMenu;
-      menuPosition = 0;
+      initMode = menuPosition = 0;
     }
     else curRightScreen = kRightTrackSelection;
   }
@@ -649,6 +671,7 @@ void checkInterface()
     {
       if (menuPosition > 0) menuPosition--;
       else menuPosition = lastMenu;
+      initMode = 0;
     }    
     else if (forceAccent)
     {
