@@ -36,6 +36,17 @@ How The Software Works
 
 --------------------------------------------------------------------------------
 
+Hold Button #5 and Press Button #8, from the first board on the left.
+
+```
+  1 2 3 4 5 6 7 8 
+  ---------------
+          +_____+
+             Global Options Menu.
+```
+
+--------------------------------------------------------------------------------
+
 Global Options Menu
 -------------------
 - Button #7 is Previous Item and Button #8 is Next Item. 
@@ -56,14 +67,25 @@ First Board (from the left).
 
 --------------------------------------------------------------------------------
 
+Hold Button #5 and Press Button #7, from the first board on the left.
+
+```
+  1 2 3 4 5 6 7 8
+  ---------------  
+          +___+
+            Pattern Menu: Copy, Paste and Init.
+```
+
+--------------------------------------------------------------------------------
+
 Pattern Menu
 ------------
 - Just click the button next to the option you want: Copy, Paste and Init. Or hit the button #5 again to exit.
 
 --------------------------------------------------------------------------------
 
-Interface Overview
-------------------
+Interface Overview (Drum Tracks - hold a step for Double-Step)
+--------------------------------------------------------------
 
 ```
   1 2 3 4 5 6 7 8    1 2 3 4 5 6 7 8  1 2 3 4 5 6 7 8
@@ -87,24 +109,27 @@ Interface Overview
 
 --------------------------------------------------------------------------------
 
-Hold Button #5 and Press Button #8, from the first board on the left.
+Interface Overview (Note Tracks - to enter this mode, just hold a step)
+-----------------------------------------------------------------------
 
 ```
-  1 2 3 4 5 6 7 8 
-  ---------------
-          +_____+
-             Global Options Menu.
-```
-
---------------------------------------------------------------------------------
-
-Hold Button #5 and Press Button #7, from the first board on the left.
-
-```
-  1 2 3 4 5 6 7 8
-  ---------------  
-          +___+
-            Pattern Menu: Copy, Paste and Init.
+  1 2 3 4 5 6 7 8    1 2 3 4 5 6 7 8  1 2 3 4 5 6 7 8
+  ---------------    ---------------  ---------------
+  P S - + M A P T    C C D D E F F G  G A A B S V O C
+  l t     e B a r      #   #     #    #   #   l e c l
+  a o     n C t a                             i l t o
+  y p     u D t c                             d o a s
+              e k                             e c v e
+          A V r                                 i e
+          c a n                                 t
+          c r                                   y
+          e i
+          n a
+          t t
+            i
+            o
+            n
+            s
 ```
 
 --------------------------------------------------------------------------------
@@ -160,3 +185,14 @@ BOM (Build Of Materials) List for the Main PCB
 - 1x Female USB-B Connector
 - 3x Jumpers
 - 6x Male Headers for the FTDI Connection
+
+--------------------------------------------------------------------------------
+
+Programming the ATmega328 IC
+----------------------------
+
+- The board requires an ATmega328 IC that has been set to use its internal oscillator. So you can't just get one that has the UNO Bootloader. You will need to use an ISP programmer and connect to the ATmega328 IC and set the correct FUSES so it uses the internal 8Mhz Oscillator in order to run at 3.3V.
+- One way to do this is to use the cheap USB Tiny ISP programmer and connect it to an Arduino Board which uses a DIP ATmega328, not the SMD ones.
+- To set the right fuses, use the following command: avrdude -p ATMEGA328P -c usbtiny -U lfuse:w:0xe2:m -U hfuse:w:0xda:m -U efuse:w:0x05:m -C "Arduino IDE PATH\hardware\tools\avr\etc\avrdude.conf"
+- Be sure to change "Arduino IDE PATH" to the correct location. In the command above I used the usbtiny programmer. Change the name for the one you are using.
+- This must be done only one time. Now to upload to the board you can select "Arduino Pro or Pro Mini" and set to "ATmega328 8Mhz 3.3V" in the options. Only worry about the Bootloader if you plan to use the board FTDI connection.
