@@ -154,10 +154,10 @@ List of required components in order to build your unit
 
 - The Main PCB produced by us. You can order on the www.Beat707.com site.
 - USB Power for the Main PCB.
-- The components required by the board above. Specially the ATmega328 IC and the Flash Memory IC. The ATmega328 runs with the internal Oscillator at 8Mhz and 3.3 VCC operation.
+- The components required by the board above. Specially the ATmega328 IC and the Flash Memory IC. The ATmega328 runs with the internal Oscillator at 8Mhz and 3.3 VCC operation. See complete list below.
 - 3 x TM1638 boards such as this one: https://github.com/Beat707/Beat707-NXT/blob/master/Hardware/TM1638.jpg or from eBay: http://www.ebay.com/itm/400985462447
 - A MIDI Cable and a MIDI compatible unit to produce some Audio. EG: a synth keyboard or a sound module. As the Beat707 NXT unit itself only produces MIDI, NOT Audio.
-- To program the ATmega328 you will also need some sort of ISP programmer. Ordering an UNO based ATmega328 won't do, as it requires 5V and 16Mhz external oscillator to run. The easy way is to order an Arduino UNO and the USB Tiny ISP programmer to program the ATmega328 on the UNO, changing it to run on 3.3V and internal 8Mhz Oscillator.
+- To program the ATmega328 you will also need some sort of ISP programmer. Ordering an UNO based ATmega328 won't do, as it requires 5V and 16Mhz external oscillator to run. The easy way is to order an Arduino UNO and the USB Tiny ISP programmer to program the ATmega328 on the UNO, changing it to run on 3.3V and internal 8Mhz Oscillator. Read more below.
 - The Flash memory is the Winbond W25Q64 BVAIG - DIP
 
 --------------------------------------------------------------------------------
@@ -184,7 +184,8 @@ Main Header (top to bottom)
 
 BOM (Build Of Materials) List for the Main PCB
 ----------------------------------------------
-- 1x ATmega328P-PU DIP - 8-Bit Microcontroller (using the internal 8Mhz Oscillator at 3.3V)
+- 1x ATmega328P-PU DIP-28 - 8-Bit Microcontroller (using the internal 8Mhz Oscillator at 3.3V)
+- 1x Socket for the ATmega328 IC. DIP-28.
 - 1x W25Q64 DIP - 8Mbit Flash Memory Chip (3.3V)
 - 1x 4N35 DIP - Octopler
 - 1x 1k Ohm Resistor
@@ -198,7 +199,7 @@ BOM (Build Of Materials) List for the Main PCB
 - 4x 100nF Ceramic Capacitor
 - 1x LD33V - 3.3V Voltage Regulator
 - 1x Female USB-B Connector
-- 3x Male Jumpers
+- 3x Male Jumpers (for power, midi in and midi out. if you plan on leaving those always on, just short-solder the connections instead)
 - 6x Male Headers for the FTDI Connection
 
 --------------------------------------------------------------------------------
@@ -206,8 +207,9 @@ BOM (Build Of Materials) List for the Main PCB
 Programming the ATmega328 IC
 ----------------------------
 
-- The board requires an ATmega328 IC that has been set to use its internal oscillator. So you can't just get one that has the UNO Bootloader. You will need to use an ISP programmer and connect to the ATmega328 IC and set the correct FUSES so it uses the internal 8Mhz Oscillator in order to run at 3.3V.
+- The board requires an ATmega328 IC that has been set to use its internal 8Mhz oscillator. So you can't just get one that has the UNO Bootloader. You will need to use an ISP programmer and connect to the ATmega328 IC and set the correct FUSES so it uses the internal 8Mhz Oscillator in order to run at 3.3V.
 - One way to do this is to use the cheap USB Tiny ISP programmer and connect it to an Arduino Board which uses a DIP ATmega328, not the SMD ones.
 - To set the right fuses, use the following command: avrdude -p ATMEGA328P -c usbtiny -U lfuse:w:0xe2:m -U hfuse:w:0xda:m -U efuse:w:0x05:m -C "Arduino IDE PATH\hardware\tools\avr\etc\avrdude.conf"
-- Be sure to change "Arduino IDE PATH" to the correct location. In the command above I used the usbtiny programmer. Change the name for the one you are using.
+- Be sure to change "Arduino IDE PATH" to the correct location. In the command above I used the usbtiny programmer. Change the name for the one you are using. You can do a search for "avrdude" to check where it is located (install the Arduino IDE first).
 - This must be done only one time. Now to upload to the board you can select "Arduino Pro or Pro Mini" and set to "ATmega328 8Mhz 3.3V" in the options. Only worry about the Bootloader if you plan to use the board FTDI connection.
+- After programming the IC, just remove and place on the Beat707 NXT board.
