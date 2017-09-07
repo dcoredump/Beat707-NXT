@@ -184,8 +184,8 @@ Main Header (top to bottom)
 
 BOM (Build Of Materials) List for the Main PCB
 ----------------------------------------------
-- 1x ATmega328P-PU DIP - 8-Bit Microcontroller
-- 1x W25Q64 DIP - 8Mbit Flash Memory Chip
+- 1x ATmega328P-PU DIP - 8-Bit Microcontroller (using the internal 8Mhz Oscillator at 3.3V)
+- 1x W25Q64 DIP - 8Mbit Flash Memory Chip (3.3V)
 - 1x 4N35 DIP - Octopler
 - 1x 1k Ohm Resistor
 - 1x 10k Ohm Resistor
@@ -195,10 +195,10 @@ BOM (Build Of Materials) List for the Main PCB
 - 1x 1N4748 Diode
 - 2x Female Din-5 - MIDI Connector
 - 1x 47uf Electrolitic Capacitor
-- 2x 100nh Ceramic Capacitor
+- 4x 100nF Ceramic Capacitor
 - 1x LD33V - 3.3V Voltage Regulator
 - 1x Female USB-B Connector
-- 3x Jumpers
+- 3x Male Jumpers
 - 6x Male Headers for the FTDI Connection
 
 --------------------------------------------------------------------------------
