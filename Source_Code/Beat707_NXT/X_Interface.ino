@@ -522,7 +522,7 @@ void checkInterface()
     //
     if (leButton >= 0)
     {
-      if (curRightScreen == kRightMenu && menuPosition == 9)
+      if (curRightScreen == kRightMenu && menuPosition == initMenu)
       {
         if (initMode == 1)
         {

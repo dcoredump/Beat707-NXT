@@ -32,11 +32,12 @@ void flashInit(bool force)
 {
   if (!flash.begin(FLASH_CHIPSIZE)) { showErrorMsg(1); }
   //
-  char header[6];
-  if (!flash.readAnything(0, (uint8_t) 0, header)) showErrorMsg(flash.error());
-  if (force || header[0] != 'B' || header[1] != '7' || header[2] != '0' || header[3] != '7' || header[4] != 'V' || header[5] != FLASH_VERSION)
+  if (!flash.readAnything(0, (uint8_t) 0, flashHeader)) showErrorMsg(flash.error());
+  byte lastSong = flashHeader[6];
+  if (force || flashHeader[0] != 'B' || flashHeader[1] != '7' || flashHeader[2] != '0' || flashHeader[3] != '7' || flashHeader[4] != 'V' || flashHeader[5] != FLASH_VERSION)
   {
     showWaitMsg(-1);
+    lastSong = 0;
     bool sectorErase = false;
     if (!flash.eraseChip()) sectorErase = true;
     int porc = 0;
@@ -53,19 +54,26 @@ void flashInit(bool force)
     //
     // Finish //
     showWaitMsg(-1);
-    header[0] = 'B';
-    header[1] = '7';
-    header[2] = '0';
-    header[3] = '7';
-    header[4] = 'V';
-    header[5] = FLASH_VERSION;
+    createFlashHeader(lastSong);
     if (sectorErase && !flash.eraseSector(0, 0)) showErrorMsg(flash.error());
-    if (!flash.writeAnything(0, (uint8_t) 0, header)) showErrorMsg(flash.error());
-    if (!flash.readAnything(0, (uint8_t) 0, header)) showErrorMsg(flash.error());
-    if (header[0] != 'B' || header[1] != '7' || header[2] != '0' || header[3] != '7' || header[4] != 'V' || header[5] != FLASH_VERSION) showErrorMsg(98);
+    if (!flash.writeAnything(0, (uint8_t) 0, flashHeader)) showErrorMsg(flash.error());
+    if (!flash.readAnything(0, (uint8_t) 0, flashHeader)) showErrorMsg(flash.error());
+    if (flashHeader[0] != 'B' || flashHeader[1] != '7' || flashHeader[2] != '0' || flashHeader[3] != '7' || flashHeader[4] != 'V' || flashHeader[5] != FLASH_VERSION) showErrorMsg(98);
   }
   //
-  loadSong(0);
+  loadSong(lastSong);
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void createFlashHeader(byte lastSong)
+{
+  flashHeader[0] = 'B';
+  flashHeader[1] = '7';
+  flashHeader[2] = '0';
+  flashHeader[3] = '7';
+  flashHeader[4] = 'V';
+  flashHeader[5] = FLASH_VERSION;
+  flashHeader[6] = lastSong;
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

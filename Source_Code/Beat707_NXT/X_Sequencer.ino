@@ -21,6 +21,29 @@ void doTickSequencer()
       ppq24Counter++;
       if (ppq24Counter >= 4) ppq24Counter = 0;
     }
+    // Check For Echo //
+    for (byte xe = 0; xe < ECHOS; xe++)
+    {
+      if (echoCounter[xe][0] > 0)
+      {
+        echoCounter[xe][1]--;
+        if (echoCounter[xe][1] == 0) 
+        {
+          echoCounter[xe][0]--;
+          if (echoCounter[xe][0] > 0) 
+          {
+            echoCounter[xe][1] = patternData.echoConfig[xe].space;
+            //
+            trackNoteOn(patternData.echoConfig[xe].track, configData.trackNote[patternData.echoConfig[xe].track-1], getMPVelocity(patternData.trackProcessor[patternData.echoConfig[xe].track-1], echoVelocity[xe]));
+            //
+            int newV = echoVelocity[xe] + patternData.echoConfig[xe].attackDecay;
+            if (newV < 0) newV = 0;
+            if (newV > 127) newV = 127;
+            echoVelocity[xe] = newV;
+          }
+        }
+      }
+    }
     //
     if (seqCounter == 0 || seqCounter == 12)
     {      
@@ -41,15 +64,30 @@ void doTickSequencer()
         //
         if ((xc > 0 && seqCounter == 0) || (seqCounter == 12 && isDouble))
         {
+          byte orgXc = xc;
           if (xc == 1) xc = accent; // use accent track 
-          else if (xc == 3) xc = 3;
-          else if (xc == 2) xc = 2;
+          //else if (xc == 3) xc = 3;
+          //else if (xc == 2) xc = 2;
           //
           if (xc == 0 && isDouble) xc = prevVel;
           if (xc <= 0 || xc > 3) xc = 1;
           prevVel = xc;
+          byte theVelocity = configData.accentValues[xc-1];
           //
-          trackNoteOn(x, configData.trackNote[x], getMPVelocity(patternData.trackProcessor[x], configData.accentValues[xc-1])); 
+          // Process Echo //
+          for (byte xe = 0; xe < ECHOS; xe++)
+          {
+            if (((patternData.echoConfig[xe].track - 1) == x) && 
+            ( (patternData.echoConfig[xe].type == echoTypeOnAllNotes) || ((patternData.echoConfig[xe].type == echoTypeForceMaxVelocity && orgXc == 3)) || ((patternData.echoConfig[xe].type == echoTypeForceLowVelocity && orgXc == 2)) ))
+            {
+              echoCounter[xe][0] = patternData.echoConfig[xe].ticks;
+              echoCounter[xe][1] = patternData.echoConfig[xe].space;
+              if (patternData.echoConfig[xe].attackDecay > 0) echoVelocity[xe] = patternData.echoConfig[xe].attackDecay; else echoVelocity[xe] = configData.accentValues[xc-1];
+              theVelocity = echoVelocity[xe];
+            }
+          }
+          //
+          trackNoteOn(x, configData.trackNote[x], getMPVelocity(patternData.trackProcessor[x], theVelocity));
         }
       }
       //
@@ -172,6 +210,10 @@ void noteTrackNoteOn(byte xtrack, byte xnote, byte xvelocity, bool slide)
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void resetSequencer()
 {
+  for (byte xe = 0; xe < ECHOS; xe++)
+  {
+    echoCounter[xe][0] = echoCounter[xe][1] = 0;
+  }
   seqPosition = seqCounter = ppq24Counter = variation = midiClockBeats = 0;
   showBPMdot = true;
   //

@@ -10,7 +10,9 @@
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #define DRUM_TRACKS 16
 #define NOTE_TRACKS 8
-#define SONGS 30
+#define SONG_POSITIONS 99
+#define ECHOS 6
+#define SONGS 29
 #define STEPS 16
 #define SHOW_FREE_RAM 0
 
@@ -23,7 +25,8 @@ enum
   midiNoteOn = 0x90, midiNoteOff = 0x80, midiCC = 0xB0, midiChannels=16,
   patternMode = 0, songMode,
   accentTrack = (DRUM_TRACKS-1),
-  procFadeMin = 4, lastMenu = 10,
+  echoTypeOnAllNotes = 0, echoTypeForceMaxVelocity, echoTypeForceLowVelocity,
+  procFadeMin = 4, lastMenu = 16, initMenu = 15,
   kLeftMain = 0
 };
 
@@ -72,7 +75,25 @@ byte menuPosition = 0;
 byte currentMode = patternMode;
 byte songPosition = 0;
 byte initMode = 0;
+byte echoCounter[ECHOS][2];
+byte echoVelocity[ECHOS];
+byte echoEdit = 0;
+bool changedSong = false;
+char flashHeader[7];
 //
+struct WECHO
+{
+  byte track, ticks, space, type;
+  char attackDecay;
+  //
+  void init()
+  {
+    track = type = 0;
+    ticks = 24;
+    space = 14;
+    attackDecay = 5;
+  }
+};
 struct WSTEPS
 {
   byte steps[DRUM_TRACKS]; // steps are stored as 8 bits variations in AABBCCDD format. 2 bits per step per variation. 0~3
@@ -93,9 +114,11 @@ struct WPATTERN //
   byte totalVariations;
   byte trackProcessor[DRUM_TRACKS+NOTE_TRACKS]; 
   byte lastNote[NOTE_TRACKS];
+  WECHO echoConfig[ECHOS];
   //
   void init()
   {
+    for (byte xe=0; xe < ECHOS; xe++) { echoConfig[xe].init(); }
     memset(trackProcessor, 0, sizeof(trackProcessor));
     memset(lastNote, 0, sizeof(lastNote));
     totalVariations = 4;
@@ -114,13 +137,13 @@ struct WCONFIG
 //
 struct WSONG
 {
-  byte pattern[2][99]; // Pattern Number and Options: ABCD var and repeat 0 to 15 (4 bits each)
+  byte pattern[2][SONG_POSITIONS]; // Pattern Number and Options: ABCD var and repeat 0 to 15 (4 bits each)
   char loopTo;
   void init()
   {
     memset(pattern, 0, sizeof(pattern));
     loopTo = -1; // No Loop //
-    for (byte x=0; x < 99; x++) { pattern[1][x] = 4 << 4; }
+    for (byte x=0; x < SONG_POSITIONS; x++) { pattern[1][x] = 4 << 4; }
   }
 };
 //
@@ -156,6 +179,8 @@ void reset()
   memset(buttonDownTime, 0, sizeof(buttonDownTime));
   memset(configData.trackMidiCH, 9, sizeof(configData.trackMidiCH));
   memset(prevPlayedNote, 0, sizeof(prevPlayedNote));
+  memset(echoCounter, 0, sizeof(echoCounter));
+  memset(echoVelocity, 0, sizeof(echoVelocity));
   for (byte x = 0; x < 8; x++) { configData.trackMidiCH[DRUM_TRACKS + x] = 1 + x; }
   bitSet(patternBitsSelector,0);
   bitSet(patternBitsSelector,8);

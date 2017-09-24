@@ -182,7 +182,120 @@ void showMenu()
             else printDashDash(2, 6);
     break;
     //
-    case 6: segments[2][0] = S_U;
+    case 6: 
+    case 7:
+    case 8:
+    case 9: 
+    case 10:
+    case 11:
+            segments[1][4] = S_E;
+            segments[1][5] = S_C;
+            segments[1][6] = S_H;
+            segments[1][7] = S_O;
+            //
+            if (menuPosition == 6)
+            {
+              printNumber(2, 5, echoEdit+1);
+            }
+            else if (menuPosition == 7)
+            {
+              segments[2][0] = S_T;
+              segments[2][1] = S_R;
+              segments[2][2] = S_A;
+              segments[2][3] = S_C;
+              if (patternData.echoConfig[echoEdit].track == 0) printDashDash(2, 6); else printNumber(2, 5, patternData.echoConfig[echoEdit].track);
+            }
+            else if (menuPosition == 8)
+            {
+              segments[2][0] = S_T;
+              segments[2][1] = S_I;
+              segments[2][2] = S_C;
+              segments[2][3] = S_S;
+              if (patternData.echoConfig[echoEdit].track == 0) printDashDash(2, 6); else printNumber(2, 5, patternData.echoConfig[echoEdit].ticks);
+            }
+            else if (menuPosition == 9)
+            {
+              segments[2][0] = S_S;
+              segments[2][1] = S_P;
+              segments[2][2] = S_S;
+              segments[2][3] = S_C;
+              if (patternData.echoConfig[echoEdit].track == 0) printDashDash(2, 6); else printNumber(2, 5, patternData.echoConfig[echoEdit].space);
+            }
+            else if (menuPosition == 10)
+            {
+              if (patternData.echoConfig[echoEdit].attackDecay > 0)
+              {
+                segments[2][0] = S_A;
+                segments[2][1] = S_T;
+                segments[2][2] = S_T;
+                segments[2][3] = S_A;
+                if (patternData.echoConfig[echoEdit].track == 0) printDashDash(2, 6); else printNumber(2, 5, patternData.echoConfig[echoEdit].attackDecay);
+              }
+              else if (patternData.echoConfig[echoEdit].attackDecay < 0)
+              {
+                segments[2][0] = S_d;
+                segments[2][1] = S_E;
+                segments[2][2] = S_C;
+                segments[2][3] = S_Y;
+                if (patternData.echoConfig[echoEdit].track == 0) printDashDash(2, 6); else printNumber(2, 5, -1 * patternData.echoConfig[echoEdit].attackDecay);
+              }
+              else 
+              {
+                segments[2][0] = S_A;
+                segments[2][1] = S_DASH;
+                segments[2][2] = S_d;
+                printDashDash(2, 6);
+              }
+            }
+            else if (menuPosition == 11)
+            {
+              if (patternData.echoConfig[echoEdit].track == 0) 
+              {
+                segments[2][0] = S_T;
+                segments[2][1] = S_Y;
+                segments[2][2] = S_P;
+                segments[2][3] = S_E;
+                //
+                printDashDash(2, 6);
+              }
+              else if (patternData.echoConfig[echoEdit].type == 0)
+              {
+                segments[2][0] = S_A;
+                segments[2][1] = S_L;
+                segments[2][2] = S_L;
+                //  
+                segments[2][4] = S_N;
+                segments[2][5] = S_O;
+                segments[2][6] = S_T;
+                segments[2][7] = S_E;
+              }
+              else if (patternData.echoConfig[echoEdit].type == 1)
+              {
+                segments[2][0] = S_T;
+                segments[2][1] = S_O;
+                segments[2][2] = S_P;
+                //  
+                segments[2][4] = S_N;
+                segments[2][5] = S_O;
+                segments[2][6] = S_T;
+                segments[2][7] = S_E;
+              }
+              else if (patternData.echoConfig[echoEdit].type == 2)
+              {
+                segments[2][0] = S_L;
+                segments[2][1] = S_O;
+                segments[2][2] = 0x3c;
+                segments[2][3] = 0x1e;
+                //  
+                segments[2][4] = S_N;
+                segments[2][5] = S_O;
+                segments[2][6] = S_T;
+                segments[2][7] = S_E;
+              }              
+            }
+    break;
+    //
+    case 12: segments[2][0] = S_U;
             segments[2][1] = S_A;
             segments[2][2] = S_R;
             //
@@ -192,7 +305,7 @@ void showMenu()
             if (patternData.totalVariations >= 4) segments[2][7] = S_d;
     break;
     //
-    case 7: segments[1][0] = S_S;
+    case 13: segments[1][0] = S_S;
             segments[1][1] = S_Y;
             segments[1][2] = S_N;
             segments[1][3] = S_C;
@@ -213,7 +326,7 @@ void showMenu()
             }
     break;
     //
-    case 8: segments[2][0] = S_S;
+    case 14: segments[2][0] = S_S;
             segments[2][1] = S_O;
             segments[2][2] = S_N;
             segments[2][3] = S_G;
@@ -221,7 +334,7 @@ void showMenu()
             printNumber(2, 5, currentSong + 1);
     break;
     //
-    case 9: segments[1][4] = S_I;
+    case 15: segments[1][4] = S_I;
             segments[1][5] = S_N;
             segments[1][6] = S_I;
             segments[1][7] = S_T;
@@ -248,7 +361,7 @@ void showMenu()
             }
     break;
     //
-    case 10: segments[1][1] = S_T;
+    case 16: segments[1][1] = S_T;
             segments[1][2] = S_O;
             //
             segments[1][4] = S_S;
@@ -300,17 +413,53 @@ void processMenu(char value)
     break;
     //
     case 6:
+        if (value > 0 && echoEdit < (ECHOS-1)) echoEdit++;
+          else if (value < 1 && echoEdit > 0) echoEdit--;
+        somethingChangedPattern = true;
+    break;
+    //
+    case 7:
+        if (value > 0 && patternData.echoConfig[echoEdit].track < (DRUM_TRACKS-1)) patternData.echoConfig[echoEdit].track++;
+          else if (value < 1 && patternData.echoConfig[echoEdit].track > 0) patternData.echoConfig[echoEdit].track--;
+        somethingChangedPattern = true;
+    break;
+    //
+    case 8:
+        if (value > 0 && patternData.echoConfig[echoEdit].ticks < 127) patternData.echoConfig[echoEdit].ticks++;
+          else if (value < 1 && patternData.echoConfig[echoEdit].ticks > 0) patternData.echoConfig[echoEdit].ticks--;
+        somethingChangedPattern = true;
+    break;
+    //
+    case 9:
+        if (value > 0 && patternData.echoConfig[echoEdit].space < 127) patternData.echoConfig[echoEdit].space++;
+          else if (value < 1 && patternData.echoConfig[echoEdit].space > 0) patternData.echoConfig[echoEdit].space--;
+        somethingChangedPattern = true;
+    break;
+    //
+    case 10:
+        if (value > 0 && patternData.echoConfig[echoEdit].attackDecay < 127) patternData.echoConfig[echoEdit].attackDecay++;
+          else if (value < 1 && patternData.echoConfig[echoEdit].attackDecay > -127) patternData.echoConfig[echoEdit].attackDecay--;
+        somethingChangedPattern = true;
+    break;  
+    //
+    case 11:
+        if (value > 0 && patternData.echoConfig[echoEdit].type <= 1) patternData.echoConfig[echoEdit].type++;
+          else if (value < 1 && patternData.echoConfig[echoEdit].type > 0) patternData.echoConfig[echoEdit].type--;
+        somethingChangedPattern = true;
+    break;  
+    //
+    case 12:
         if (value > 0 && patternData.totalVariations < 4) patternData.totalVariations++;
           else if (value < 1 && patternData.totalVariations > 1) patternData.totalVariations--;
         somethingChangedPattern = true;
     break;
     //
-    case 7:
+    case 13:
       configData.seqSyncOut = !configData.seqSyncOut;
       somethingChangedConfig = true;
     break;
     //
-    case 8:
+    case 14:
       if (!seqPlaying)
       {
         checkIfDataNeedsSaving();
@@ -319,15 +468,16 @@ void processMenu(char value)
           else if (value < 1 && currentSong > 0) currentSong--;
         //
         loadSong(currentSong);
+        changedSong = true;
       }
     break;
     //
-    case 9:
+    case 15:
       if (value > 0 && initMode < 2) initMode++;
       else if (value < 1 && initMode > 0) initMode--;
     break;    
     //
-    case 10:
+    case 16:
       if (!seqPlaying)
       {
         checkIfDataNeedsSaving();

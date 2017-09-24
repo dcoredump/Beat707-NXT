@@ -26,5 +26,13 @@ void checkIfDataNeedsSaving()
     pagePos++;
     if (!flash.writeAnything(pagePos, (uint8_t) 0, songData)) showErrorMsg(flash.error());
   }
+  //
+  if (changedSong)
+  {
+    changedSong = false;
+    createFlashHeader(currentSong);
+    if (!flash.eraseSector(0, 0)) showErrorMsg(flash.error());
+    if (!flash.writeAnything(0, (uint8_t) 0, flashHeader)) showErrorMsg(flash.error());    
+  }
 }
 
