@@ -11,8 +11,8 @@
 #define DRUM_TRACKS 16
 #define NOTE_TRACKS 8
 #define SONG_POSITIONS 99
-#define ECHOS 8
-#define SONGS 30
+#define ECHOS 6
+#define SONGS 28
 #define STEPS 16
 #define INIT_FLASH_MEMORY 0
 #define SHOW_FREE_RAM 0
@@ -23,7 +23,7 @@ enum
 {
   fadeIn = 1, fadeOut, fadeInOut, fadeOutIn, fadeInD, fadeOutD, randomVel,
   kButtonNone = 0, kButtonClicked, kButtonHold, kButtonRelease, kButtonReleaseNothingClicked,
-  kRightSteps = 0, kRightABCDVariations, kRightTrackSelection, kRightPatternSelection, kRightMenuCopyPaste, kRightMenu,
+  kRightSteps = 0, kRightABCDVariations, kRightTrackSelection, kRightPatternSelection, kRightMenuCopyPaste, kRightMenu, kMuteSoloMenu,
   midiNoteOn = 0x90, midiNoteOff = 0x80, midiCC = 0xB0, midiChannels=16,
   patternMode = 0, songMode,
   accentTrack = (DRUM_TRACKS-1),
@@ -82,6 +82,7 @@ byte echoVelocity[ECHOS];
 byte echoEdit = 0;
 bool changedSong = false;
 char flashHeader[8];
+bool hasSoloTrack = false;
 //
 struct WECHO
 {
@@ -117,6 +118,8 @@ struct WPATTERN //
   byte trackProcessor[DRUM_TRACKS+NOTE_TRACKS]; 
   byte lastNote[NOTE_TRACKS];
   WECHO echoConfig[ECHOS];
+  uint32_t muteTrack;
+  uint32_t soloTrack;
   //
   void init()
   {
@@ -124,6 +127,7 @@ struct WPATTERN //
     memset(trackProcessor, 0, sizeof(trackProcessor));
     memset(lastNote, 0, sizeof(lastNote));
     totalVariations = 4;
+    muteTrack = soloTrack = 0;
   }
 };
 //
@@ -174,7 +178,7 @@ void setup()
 void reset()
 {
   createFlashHeader(currentSong);
-  memset(segments, 0, sizeof(segments));
+  resetSegments(0, 2);
   memset(leds, 0, sizeof(leds));
   memset(buttons, 0, sizeof(buttons));  
   memset(buttonEvent, 0, sizeof(buttonEvent));

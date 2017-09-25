@@ -138,11 +138,11 @@ void readButtons(void)
       {
         if (buttonDownTime[i][x] < BUTTON_HOLD) buttonDownTime[i][x]++;
         if ((buttonDownTime[i][x] >= BUTTON_HOLD && !bitRead(buttonEventWasHolding[i], x)) ||
-            (i == 0 && (x >= 6 || x == 4) && buttonDownTime[i][x] > BUTTON_CLICK && !bitRead(buttonEventWasHolding[i],x)))
+            (i == 0 && curRightScreen != kMuteSoloMenu && (x >= 6 || x == 4) && buttonDownTime[i][x] > BUTTON_CLICK && !bitRead(buttonEventWasHolding[i],x)))
         {
           somethingClicked = false;
           bitSet(buttonEventWasHolding[i], x);
-          if (i == 0 && (x == 2 || x == 3))
+          if (i == 0 && curRightScreen != kMuteSoloMenu && (x == 2 || x == 3))
           {
             buttonEvent[i][x] = kButtonClicked;
             bitClear(buttonEventWasHolding[i], x);
@@ -163,7 +163,7 @@ void readButtons(void)
             if ((buttonDownTime[i][x]) >= BUTTON_HOLD || bitRead(buttonEventWasHolding[i], x))
             {
               if (somethingClicked) buttonEvent[i][x] = kButtonRelease; else buttonEvent[i][x] = kButtonReleaseNothingClicked;
-              if (buttonEvent[i][x] == kButtonReleaseNothingClicked && i == 0 && x == 6 && buttonDownTime[i][x] >= BUTTON_HOLD) buttonEvent[i][x] = kButtonRelease;
+              if (buttonEvent[i][x] == kButtonReleaseNothingClicked && i == 0 && x == 6 && curRightScreen != kMuteSoloMenu && buttonDownTime[i][x] >= BUTTON_HOLD) buttonEvent[i][x] = kButtonRelease;
               somethingHappened = true;
             }
             else 
@@ -264,6 +264,7 @@ void printNumber(byte segment, byte offset, int number)
 #define S_P        B01110011
 #define S_I        B00110000
 #define S_H        B01110110
+#define S__        B00001000
 byte stepChars[4] = { B00000000, B00001000, B01010100, B00110111 };
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

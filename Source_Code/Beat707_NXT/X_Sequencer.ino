@@ -57,54 +57,62 @@ void doTickSequencer()
       accent |= bitRead(stepsData[seqPosition].steps[15], 0 + (variation * 2));
       //
       for (byte x=0; x<(DRUM_TRACKS-1); x++)
-      {       
-        byte xc = bitRead(stepsData[seqPosition].steps[x], 1 + (variation * 2)) << 1;
-        xc |= bitRead(stepsData[seqPosition].steps[x], 0 + (variation * 2));
-        bool isDouble = bitRead(stepsData[seqPosition].stepsDouble[variation], x);
-        //
-        if ((xc > 0 && seqCounter == 0) || (seqCounter == 12 && isDouble))
+      {
+        if ((hasSoloTrack && bitRead(patternData.soloTrack, NOTE_TRACKS + x) == 1) ||
+        (!hasSoloTrack && bitRead(patternData.muteTrack, NOTE_TRACKS + x) != 1))
         {
-          byte orgXc = xc;
-          if (xc == 1) xc = accent; // use accent track 
-          //else if (xc == 3) xc = 3;
-          //else if (xc == 2) xc = 2;
+          byte xc = bitRead(stepsData[seqPosition].steps[x], 1 + (variation * 2)) << 1;
+          xc |= bitRead(stepsData[seqPosition].steps[x], 0 + (variation * 2));
+          bool isDouble = bitRead(stepsData[seqPosition].stepsDouble[variation], x);
           //
-          if (xc == 0 && isDouble) xc = prevVel;
-          if (xc <= 0 || xc > 3) xc = 1;
-          prevVel = xc;
-          byte theVelocity = configData.accentValues[xc-1];
-          //
-          // Process Echo //
-          for (byte xe = 0; xe < ECHOS; xe++)
+          if ((xc > 0 && seqCounter == 0) || (seqCounter == 12 && isDouble))
           {
-            if (((patternData.echoConfig[xe].track - 1) == x) && 
-            ( (patternData.echoConfig[xe].type == echoTypeOnAllNotes) || ((patternData.echoConfig[xe].type == echoTypeForceMaxVelocity && orgXc == 3)) || ((patternData.echoConfig[xe].type == echoTypeForceLowVelocity && orgXc == 2)) ))
+            byte orgXc = xc;
+            if (xc == 1) xc = accent; // use accent track 
+            //else if (xc == 3) xc = 3;
+            //else if (xc == 2) xc = 2;
+            //
+            if (xc == 0 && isDouble) xc = prevVel;
+            if (xc <= 0 || xc > 3) xc = 1;
+            prevVel = xc;
+            byte theVelocity = configData.accentValues[xc-1];
+            //
+            // Process Echo //
+            for (byte xe = 0; xe < ECHOS; xe++)
             {
-              echoCounter[xe][0] = patternData.echoConfig[xe].ticks;
-              echoCounter[xe][1] = patternData.echoConfig[xe].space;
-              if (patternData.echoConfig[xe].attackDecay > 0) echoVelocity[xe] = patternData.echoConfig[xe].attackDecay; else echoVelocity[xe] = configData.accentValues[xc-1];
-              theVelocity = echoVelocity[xe];
+              if (((patternData.echoConfig[xe].track - 1) == x) && 
+              ( (patternData.echoConfig[xe].type == echoTypeOnAllNotes) || ((patternData.echoConfig[xe].type == echoTypeForceMaxVelocity && orgXc == 3)) || ((patternData.echoConfig[xe].type == echoTypeForceLowVelocity && orgXc == 2)) ))
+              {
+                echoCounter[xe][0] = patternData.echoConfig[xe].ticks;
+                echoCounter[xe][1] = patternData.echoConfig[xe].space;
+                if (patternData.echoConfig[xe].attackDecay > 0) echoVelocity[xe] = patternData.echoConfig[xe].attackDecay; else echoVelocity[xe] = configData.accentValues[xc-1];
+                theVelocity = echoVelocity[xe];
+              }
             }
+            //
+            trackNoteOn(x, configData.trackNote[x], getMPVelocity(patternData.trackProcessor[x], theVelocity));
           }
-          //
-          trackNoteOn(x, configData.trackNote[x], getMPVelocity(patternData.trackProcessor[x], theVelocity));
         }
       }
       //
       for (byte x=0; x<(NOTE_TRACKS-1); x++)
-      {       
-        byte xvel = bitRead(stepsData[seqPosition].noteStepsExtras[x][0], 1 + (variation * 2)) << 1;
-        xvel |= bitRead(stepsData[seqPosition].noteStepsExtras[x][0], 0 + (variation * 2));
-        byte xc = bitRead(stepsData[seqPosition].noteStepsExtras[x][1], 1 + (variation * 2)) << 1;
-        xc |= bitRead(stepsData[seqPosition].noteStepsExtras[x][1], 0 + (variation * 2));
-        //
-        bool isSlide = (xc == 1);
-        bool isDouble = (xc == 2);
-        byte xnote = stepsData[seqPosition].noteSteps[x][variation];
-        //
-        if ((xnote > 0 && seqCounter == 0) || (xnote > 0 && seqCounter == 12 && isDouble))
+      {
+        if ((hasSoloTrack && bitRead(patternData.soloTrack, x) == 1) ||
+        (!hasSoloTrack && bitRead(patternData.muteTrack, x) != 1))
         {
-          noteTrackNoteOn(DRUM_TRACKS+x, xnote, getMPVelocity(patternData.trackProcessor[DRUM_TRACKS+x], configData.accentValues[xvel-1]), isSlide);
+          byte xvel = bitRead(stepsData[seqPosition].noteStepsExtras[x][0], 1 + (variation * 2)) << 1;
+          xvel |= bitRead(stepsData[seqPosition].noteStepsExtras[x][0], 0 + (variation * 2));
+          byte xc = bitRead(stepsData[seqPosition].noteStepsExtras[x][1], 1 + (variation * 2)) << 1;
+          xc |= bitRead(stepsData[seqPosition].noteStepsExtras[x][1], 0 + (variation * 2));
+          //
+          bool isSlide = (xc == 1);
+          bool isDouble = (xc == 2);
+          byte xnote = stepsData[seqPosition].noteSteps[x][variation];
+          //
+          if ((xnote > 0 && seqCounter == 0) || (xnote > 0 && seqCounter == 12 && isDouble))
+          {
+            noteTrackNoteOn(DRUM_TRACKS+x, xnote, getMPVelocity(patternData.trackProcessor[DRUM_TRACKS+x], configData.accentValues[xvel-1]), isSlide);
+          }
         }
       }
       //

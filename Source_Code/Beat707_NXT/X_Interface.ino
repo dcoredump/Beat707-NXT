@@ -7,6 +7,12 @@
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void createScreen()
 {
+  if (curRightScreen == kMuteSoloMenu)
+  {
+    createScreenMuteSolo();
+    return;
+  }
+  //
   byte xVar = variation;
   if (forceVariation >= 0) xVar = forceVariation;
   //
@@ -67,8 +73,7 @@ void createScreen()
     if (streamNextPattern || loadPatternNow) segments[0][7] |= B10000000;
   }
   //
-  memset(segments[1], 0, sizeof(segments[1]));
-  memset(segments[2], 0, sizeof(segments[2]));
+  resetSegments(1, 2);
   //
   if (curRightScreen == kRightMenuCopyPaste)
   {
@@ -206,6 +211,12 @@ void checkInterface()
 {
   if (!somethingHappened) return;
   somethingHappened = false;
+  //
+  if (curRightScreen == kMuteSoloMenu)
+  {
+    checkInterfaceMuteSolo();
+    return;
+  }
   //
   // Start Sequencer //
   if (buttonEvent[0][0] >= kButtonClicked)
@@ -583,17 +594,26 @@ void checkInterface()
   if (buttonEvent[0][5] == kButtonClicked)
   {
     checkMenuClose();
-    updateScreen = true;
     buttonEvent[0][5] = 0;
-    if (forceVariation >= 0)
+    updateScreen = true;
+    //
+    if (forceAccent)
     {
-      mirror = false;
-      forceVariation = -1;    
+      curRightScreen = kMuteSoloMenu;
+      forceAccent = false;
     }
     else
     {
-      mirror = !mirror;
-      forceVariation = -1;
+      if (forceVariation >= 0)
+      {
+        mirror = false;
+        forceVariation = -1;    
+      }
+      else
+      {
+        mirror = !mirror;
+        forceVariation = -1;
+      }
     }
   }
   else if (buttonEvent[0][5] == kButtonHold)
@@ -719,3 +739,9 @@ void clearStepsExtrasBits(byte thestep, byte xVar)
   bitClear(stepsData[thestep].noteStepsExtras[curTrack-DRUM_TRACKS][1], (editVariation * 2));
   bitClear(stepsData[thestep].noteStepsExtras[curTrack-DRUM_TRACKS][1], (editVariation * 2) + 1);
 }  
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void resetSegments(byte xs, byte xe)
+{
+  for (byte xx = xs; xx <= xe; xx++) { memset(segments[xx], 0, sizeof(segments[0])); }
+}

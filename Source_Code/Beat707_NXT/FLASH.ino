@@ -134,6 +134,7 @@ void loadPattern(byte pattern, bool force = false)
     patternBitsSelector = 0;
     bitSet(patternBitsSelector, 8 + (currentPattern - ((currentPattern / 8) * 8)));
     bitSet(patternBitsSelector, (currentPattern / 8));
+    checkSoloTracks();
     //
     ignoreButtons = false;
   }
