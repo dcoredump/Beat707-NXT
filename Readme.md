@@ -20,6 +20,8 @@ MIDI Groove Sequencer
 - 16 Steps on screen, plus ABCD variations for a total of 64 steps.
 - Double Steps (in between steps option when editing the steps). Steps are 1/16 and Double-Steps are 1/32.
 - MIDI Processor Per Track. EG: Fade In, Fade Out, Fade InOut, Fade OutInt, Random Velocity and more.
+- Song Mode with 99 positions. Each with Pattern Number and Options: ABCD var and repeat 0 to 15 (4 bits each).
+- Echo option with the following options: track selector, number of 96 PPQ ticks, space in 96 PPQ ticks, Attach or Decay Velocity and the option to select when the echo happens: on all notes, max or lower forced velocity notes.
 - Simple Hardware design, based on the easy to find TM1638 IC based boards. Just search on eBay and you should be able to find several options. We used 3 boards that has 8 x buttons, 8 x LEDs and 8 x LED_Segments. The board uses a single ATmega328 running at 3.3V, one FLASH chip for storage and connections for the TM1638 boards.
 - MIDI Input and Output, with Clock Send and Receive (Slave mode too).
 
@@ -28,7 +30,7 @@ MIDI Groove Sequencer
 How The Software Works
 ----------------------
 
-- The first board is the main interface. Where it shows the Tempo in BPM and the current Pattern. The top leds, first 4 leds show the beat position and the last 4 leds shows the ABCD pattern variation. Also, beats will blink to bottom dot of the 4th digit from left to right.
+- The first TM1638 board is the main interface. Where it shows the Tempo in BPM and the current Pattern. The top leds, first 4 leds show the beat position and the last 4 leds shows the ABCD pattern variation. Also, beats will blink to bottom dot of the 4th digit from left to right.
 - Still in the first board, the first button is Play, second button is Stop. 3rd is - and 4th is +. 5th, when hold, let you force a step to Max, Min or Accent. 6th button, if you press and release, will alternate mirror mode, where all ABCD variations will be edited at once, or not, when disabled. You can also hold it and select the first 4 buttons on the second board to select ABCD variations directly. The 7th button, if you press and release, will go to the next pattern. If you hold, it will show the current selected pattern on the two other boards LEDs. The final button, the 8th one, is for selecting the track been edited. If you select a track twice, it will go to the Note Track, instead of Drum Track.
 - Holding button #5 from the first board and selecting the button #7, will open the pattern menu: copy, paste, init. Or selecting button #8 will open the global settings menu.
 - Adding steps is easy, just click to turn On or Off. By default when you turn a step On it will use the Accent track (last track). Or you can hold button #5 from the left board and turn a step On: Max, Min and Accent. Holding a step will turn the Double-Step On/Off. The Double-Step uses the same velocity as the regular step it is on. Double-Steps are 1/32 steps.
@@ -74,6 +76,7 @@ Options
 - MIDI Accent Value 2
 - MIDI Accent Value 3
 - MIDI Processor for the current track
+- ECHO Processor (6 options)
 - Pattern Variations: ABCD (each variation has 16 steps)
 - MIDI Sync Out: On/Off
 - Current Song

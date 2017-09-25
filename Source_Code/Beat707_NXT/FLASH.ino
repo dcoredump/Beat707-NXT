@@ -25,21 +25,33 @@
  */
 
 #define FLASH_CHIPSIZE MB64
-#define FLASH_VERSION '1'
+#define FLASH_VERSION '2'
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void flashInit(bool force)
 {
   if (!flash.begin(FLASH_CHIPSIZE)) { showErrorMsg(1); }
-  //
+  delay(999);
   if (!flash.readAnything(0, (uint8_t) 0, flashHeader)) showErrorMsg(flash.error());
+  //
+  #if DEBUG_SERIAL
+    Serial.println(flashHeader);
+  #endif  
+  //
   byte lastSong = flashHeader[6];
-  if (force || flashHeader[0] != 'B' || flashHeader[1] != '7' || flashHeader[2] != '0' || flashHeader[3] != '7' || flashHeader[4] != 'V' || flashHeader[5] != FLASH_VERSION)
+  if (flashHeader[0] != 'B' || flashHeader[1] != '7' || flashHeader[2] != '0' || flashHeader[3] != '7' || flashHeader[4] != 'V' || flashHeader[5] != FLASH_VERSION) showErrorMsg(99);
+  //
+  #if INIT_FLASH_MEMORY
+    force = true;
+  #endif
+  //
+  if (force)
   {
     showWaitMsg(-1);
     lastSong = 0;
-    bool sectorErase = false;
-    if (!flash.eraseChip()) sectorErase = true;
+    //bool sectorErase = false;
+    //if (!flash.eraseChip()) sectorErase = true;
+    bool sectorErase = true;
     int porc = 0;
     //
     // Start Saving Songs/Patterns //
@@ -58,6 +70,11 @@ void flashInit(bool force)
     if (sectorErase && !flash.eraseSector(0, 0)) showErrorMsg(flash.error());
     if (!flash.writeAnything(0, (uint8_t) 0, flashHeader)) showErrorMsg(flash.error());
     if (!flash.readAnything(0, (uint8_t) 0, flashHeader)) showErrorMsg(flash.error());
+    //
+    #if DEBUG_SERIAL
+      Serial.println(flashHeader);
+    #endif  
+    //    
     if (flashHeader[0] != 'B' || flashHeader[1] != '7' || flashHeader[2] != '0' || flashHeader[3] != '7' || flashHeader[4] != 'V' || flashHeader[5] != FLASH_VERSION) showErrorMsg(98);
   }
   //

@@ -11,10 +11,12 @@
 #define DRUM_TRACKS 16
 #define NOTE_TRACKS 8
 #define SONG_POSITIONS 99
-#define ECHOS 6
-#define SONGS 29
+#define ECHOS 8
+#define SONGS 30
 #define STEPS 16
+#define INIT_FLASH_MEMORY 0
 #define SHOW_FREE_RAM 0
+#define DEBUG_SERIAL 0
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 enum
@@ -79,7 +81,7 @@ byte echoCounter[ECHOS][2];
 byte echoVelocity[ECHOS];
 byte echoEdit = 0;
 bool changedSong = false;
-char flashHeader[7];
+char flashHeader[8];
 //
 struct WECHO
 {
@@ -158,13 +160,12 @@ void setup()
   startMIDIinterface(false);
   initTM1638();
   reset();
-  flashInit(false);
-  //
   #if SHOW_FREE_RAM
     freeMemory();
     sendScreen();
     delay(2000);
-  #endif
+  #endif 
+  flashInit(false);
   //
   startTimer();
 }
@@ -172,6 +173,7 @@ void setup()
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void reset()
 {
+  createFlashHeader(currentSong);
   memset(segments, 0, sizeof(segments));
   memset(leds, 0, sizeof(leds));
   memset(buttons, 0, sizeof(buttons));  
