@@ -60,9 +60,18 @@ void flashInit(bool force)
       initSong(x, sectorErase, porc, false);
     }
     // Reset the Init Area //
-    uint16_t pagePos = 16 + (SONGS * ((64 * 16) + 16));
+    uint16_t pagePos = 16 + (SONGS * ((64 * 16) + 16)) + 16;
     if (sectorErase && !flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());
-    if (!flash.writeAnything(pagePos, (uint8_t) 0, stepsData)) showErrorMsg(flash.error()+80);
+    if (!flash.writeAnything(pagePos, (uint8_t) 0, patternData)) showErrorMsg(flash.error());
+    pagePos++;
+    if (!flash.writeAnything(pagePos, (uint8_t) 0, stepsData)) showErrorMsg(flash.error());
+    //
+    // Reset the Copy/Paste Area //
+    pagePos = 16 + (SONGS * ((64 * 16) + 16));
+    if (sectorErase && !flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());
+    if (!flash.writeAnything(pagePos, (uint8_t) 0, patternData)) showErrorMsg(flash.error());
+    pagePos++;
+    if (!flash.writeAnything(pagePos, (uint8_t) 0, stepsData)) showErrorMsg(flash.error());
     //
     // Finish //
     showWaitMsg(-1);

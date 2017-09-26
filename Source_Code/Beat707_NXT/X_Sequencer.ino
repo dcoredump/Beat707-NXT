@@ -32,11 +32,11 @@ void doTickSequencer()
           echoCounter[xe][0]--;
           if (echoCounter[xe][0] > 0) 
           {
-            echoCounter[xe][1] = patternData.echoConfig[xe].space;
+            echoCounter[xe][1] = echoSpace[xe];
             //
-            trackNoteOn(patternData.echoConfig[xe].track, configData.trackNote[patternData.echoConfig[xe].track-1], getMPVelocity(patternData.trackProcessor[patternData.echoConfig[xe].track-1], echoVelocity[xe]));
+            trackNoteOn(echoTrack[xe], configData.trackNote[echoTrack[xe]-1], getMPVelocity(patternData.trackProcessor[echoTrack[xe]-1], echoVelocity[xe]));
             //
-            int newV = echoVelocity[xe] + patternData.echoConfig[xe].attackDecay;
+            int newV = echoVelocity[xe] + echoAttackDecay[xe];
             if (newV < 0) newV = 0;
             if (newV > 127) newV = 127;
             echoVelocity[xe] = newV;
@@ -85,6 +85,9 @@ void doTickSequencer()
               {
                 echoCounter[xe][0] = patternData.echoConfig[xe].ticks;
                 echoCounter[xe][1] = patternData.echoConfig[xe].space;
+                echoAttackDecay[xe] = patternData.echoConfig[xe].attackDecay;
+                echoSpace[xe] = patternData.echoConfig[xe].space;
+                echoTrack[xe] = patternData.echoConfig[xe].track;
                 if (patternData.echoConfig[xe].attackDecay > 0) echoVelocity[xe] = patternData.echoConfig[xe].attackDecay; else echoVelocity[xe] = configData.accentValues[xc-1];
                 theVelocity = echoVelocity[xe];
               }

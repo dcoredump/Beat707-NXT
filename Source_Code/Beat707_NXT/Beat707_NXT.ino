@@ -10,7 +10,7 @@
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #define DRUM_TRACKS 16
 #define NOTE_TRACKS 8
-#define SONG_POSITIONS 99
+#define SONG_POSITIONS 64
 #define ECHOS 6
 #define SONGS 28
 #define STEPS 16
@@ -77,12 +77,15 @@ byte menuPosition = 0;
 byte currentMode = patternMode;
 byte songPosition = 0;
 byte initMode = 0;
-byte echoCounter[ECHOS][2];
-byte echoVelocity[ECHOS];
-byte echoEdit = 0;
 bool changedSong = false;
 char flashHeader[8];
 bool hasSoloTrack = false;
+byte echoCounter[ECHOS][2];
+byte echoVelocity[ECHOS];
+byte echoTrack[ECHOS];
+char echoAttackDecay[ECHOS];
+byte echoSpace[ECHOS];
+byte echoEdit = 0;
 //
 struct WECHO
 {
@@ -179,6 +182,9 @@ void reset()
 {
   createFlashHeader(currentSong);
   resetSegments(0, 2);
+  memset(echoSpace, 0, sizeof(echoSpace));
+  memset(echoAttackDecay, 0, sizeof(echoAttackDecay));
+  memset(echoTrack, 0, sizeof(echoTrack));
   memset(leds, 0, sizeof(leds));
   memset(buttons, 0, sizeof(buttons));  
   memset(buttonEvent, 0, sizeof(buttonEvent));

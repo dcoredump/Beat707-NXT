@@ -184,19 +184,19 @@ void readButtons(void)
   }
 }
 
-byte numbers[10] = { B00111111, B00000110, B01011011, B01001111, B01100110, B01101101, B01111101, B00000111, B01111111, B01100111};
+const byte numbers[10] PROGMEM = { B00111111, B00000110, B01011011, B01001111, B01100110, B01101101, B01111101, B00000111, B01111111, B01100111};
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void printNumber(byte segment, byte offset, int number)
 {
   int x = number / 100;
-  segments[segment][offset] = numbers[0 + x];
+  segments[segment][offset] = (char)pgm_read_word(&numbers[0 + x]);
   number -= x * 100;
   //
   x = number / 10;
-  segments[segment][offset + 1] = numbers[0 + x];
+  segments[segment][offset + 1] = (char)pgm_read_word(&numbers[0 + x]);
   number -= x * 10;
   //
-  segments[segment][offset + 2] = numbers[0 + number];
+  segments[segment][offset + 2] = (char)pgm_read_word(&numbers[0 + number]);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -216,7 +216,7 @@ void printNumber(byte segment, byte offset, int number)
     if (free_memory > 999)
     {
       int x = free_memory / 1000;
-      segments[2][0] = numbers[0 + x];
+      segments[2][0] = (char)pgm_read_word(&numbers[0 + x]);
       free_memory -= x * 1000;
     }
     printNumber(2, 1, free_memory);
@@ -265,7 +265,7 @@ void printNumber(byte segment, byte offset, int number)
 #define S_I        B00110000
 #define S_H        B01110110
 #define S__        B00001000
-byte stepChars[4] = { B00000000, B00001000, B01010100, B00110111 };
+const byte stepChars[4] PROGMEM = { B00000000, B00001000, B01010100, B00110111 };
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void showErrorMsg(byte error)
@@ -323,6 +323,6 @@ void printMIDInote(byte note, byte segment, byte offset, byte offsetOctave)
   //
   byte xn = (note / 12);
   if (xn >= 10) xn = 9;
-  segments[segment][offsetOctave] = numbers[xn];
+  segments[segment][offsetOctave] = (char)pgm_read_word(&numbers[xn]);
 }
 

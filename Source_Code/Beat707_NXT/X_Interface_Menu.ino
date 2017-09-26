@@ -34,17 +34,27 @@ void processMenuCopyPaste(byte button)
 {
   if (button >= 4 && button <= 7) // Copy
   {
-    if (!flash.eraseSector(uint16_t(16 + (SONGS * ((64 * 16) + 16))), 0)) showErrorMsg(flash.error());
-    if (!flash.writeAnything(uint16_t(16 + (SONGS * ((64 * 16) + 16))), (uint8_t) 0, stepsData)) showErrorMsg(flash.error());
+    uint16_t pagePos = 16 + (SONGS * ((64 * 16) + 16));
+    if (!flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());
+    if (!flash.writeAnything(pagePos, (uint8_t) 0, patternData)) showErrorMsg(flash.error());
+    pagePos++;
+    if (!flash.writeAnything(pagePos, (uint8_t) 0, stepsData)) showErrorMsg(flash.error());
+    
   }
   else if (button >= 8 && button <= 11) // Paste
   {
-    if (!flash.readAnything(uint16_t(16 + (SONGS * ((64 * 16) + 16))), (uint8_t) 0, stepsData)) showErrorMsg(flash.error());
+    uint16_t pagePos = 16 + (SONGS * ((64 * 16) + 16));
+    if (!flash.readAnything(pagePos, (uint8_t) 0, patternData)) showErrorMsg(flash.error());
+    pagePos++;
+    if (!flash.readAnything(pagePos, (uint8_t) 0, stepsData)) showErrorMsg(flash.error());
     somethingChangedPattern = true;
   }
   else if (button >= 12 && button <= 15) // Init
   {
-    if (!flash.readAnything(uint16_t(16 + (SONGS * ((64 * 16) + 16))) + 16, (uint8_t) 0, stepsData)) showErrorMsg(flash.error());
+    uint16_t pagePos = 16 + (SONGS * ((64 * 16) + 16)) + 16;
+    if (!flash.readAnything(pagePos, (uint8_t) 0, patternData)) showErrorMsg(flash.error());
+    pagePos++;
+    if (!flash.readAnything(pagePos, (uint8_t) 0, stepsData)) showErrorMsg(flash.error());
     somethingChangedPattern = true;
   }
   //
@@ -90,7 +100,7 @@ void showMenu()
             segments[1][5] = S_T;
             //
             segments[2][0] = S_U;
-            segments[2][1] = numbers[menuPosition-2+1];
+            segments[2][1] = (char)pgm_read_word(&numbers[menuPosition-2+1]);
             //
             printNumber(2, 4, configData.accentValues[menuPosition-2]);
     break;

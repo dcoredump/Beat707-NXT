@@ -99,7 +99,7 @@ void createScreen()
           //
           if (curTrack == 15)
           {
-            segments[xs + 1][x] = stepChars[xc];
+            segments[xs + 1][x] = (char)pgm_read_word(&stepChars[xc]);
           }
           else
           {
@@ -107,15 +107,15 @@ void createScreen()
             {
               byte xc = bitRead(stepsData[x + (xs*8)].steps[15], 1 + (xVar * 2)) << 1;
               xc |= bitRead(stepsData[x + (xs*8)].steps[15], 0 + (xVar * 2));
-              segments[xs + 1][x] = stepChars[xc];
+              segments[xs + 1][x] = (char)pgm_read_word(&stepChars[xc]);
             }
             else if (xc == 3)
             {
-              segments[xs + 1][x] = stepChars[3];
+              segments[xs + 1][x] = (char)pgm_read_word(&stepChars[3]);
             }
             else if (xc == 2)
             {
-              segments[xs + 1][x] = stepChars[1];
+              segments[xs + 1][x] = (char)pgm_read_word(&stepChars[1]);
             }
             //
             if (bitRead(stepsData[x + (xs*8)].stepsDouble[xVar], curTrack)) segments[xs + 1][x] |= B10000000;
@@ -147,7 +147,7 @@ void createScreen()
           byte xc = bitRead(stepsData[editStep].noteStepsExtras[curTrack-DRUM_TRACKS][0], 1 + (editVariation * 2)) << 1;
           xc |= bitRead(stepsData[editStep].noteStepsExtras[curTrack-DRUM_TRACKS][0], 0 + (editVariation * 2));
           segments[2][6] = S_U;
-          segments[2][7] = numbers[xc];
+          segments[2][7] = (char)pgm_read_word(&numbers[xc]);
           //
           if (xm == 1) 
           {
@@ -182,7 +182,7 @@ void createScreen()
             {
               byte xc = bitRead(stepsData[x + (xs*8)].noteStepsExtras[curTrack-DRUM_TRACKS][0], 1 + (xVar * 2)) << 1;
               xc |= bitRead(stepsData[x + (xs*8)].noteStepsExtras[curTrack-DRUM_TRACKS][0], 0 + (xVar * 2));
-              segments[xs + 1][x] = stepChars[xc];
+              segments[xs + 1][x] = (char)pgm_read_word(&stepChars[xc]);
             }
             //
             if (xm == 1) segments[xs + 1][x] |= B01000000;
