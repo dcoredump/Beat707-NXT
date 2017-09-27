@@ -80,10 +80,10 @@
 #define PREVWRITTEN  0x07
 #define LOWRAM       0x08
 #define SYSSUSPEND   0x09
-#define UNSUPPORTED  0x0A
-#define ERRORCHKFAIL 0x0B
-#define NORESPONSE   0x0C
-#define UNKNOWNERROR 0xFE
+#define UNSUPPORTED  0x0A //10
+#define ERRORCHKFAIL 0x0B //11
+#define NORESPONSE   0x0C //12
+#define UNKNOWNERROR 0xFE //13
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #ifdef ARDUINO_ARCH_AVR
@@ -249,18 +249,11 @@ template <class T> bool SPIFlash::_writeErrorCheck(uint32_t address, const T& va
   uint8_t _v;
   for(uint16_t i = 0; i < sizeof(value);i++)
   {
-#if defined (ARDUINO_ARCH_SAM)
-    if(*p++ != _dueSPIRecByte())
-    {
-      return false;
-    }
-#else
     if(*p++ != _nextByte())
     {
       errorcode = ERRORCHKFAIL;
       return false;
     }
-#endif
   }
   _endSPI();
   return true;

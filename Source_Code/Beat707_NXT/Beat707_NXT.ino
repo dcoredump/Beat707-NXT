@@ -86,6 +86,8 @@ byte echoTrack[ECHOS];
 char echoAttackDecay[ECHOS];
 byte echoSpace[ECHOS];
 byte echoEdit = 0;
+uint32_t prevMuteTrack = 0;
+uint32_t prevSoloTrack = 0xFFFFFFFF;
 //
 struct WECHO
 {

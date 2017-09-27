@@ -30,7 +30,7 @@
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void flashInit(bool force)
 {
-  if (!flash.begin(FLASH_CHIPSIZE)) { showErrorMsg(1); }
+  if (!flash.begin(FLASH_CHIPSIZE)) { showErrorMsg(127); }
   delay(999);
   if (!flash.readAnything(0, (uint8_t) 0, flashHeader)) showErrorMsg(flash.error());
   //
@@ -108,17 +108,17 @@ void initSong(byte song, bool sectorErase, int &porc, bool songOnly)
   uint16_t pagePos = 16 + (song * ((64 * 16) + 16));
   //
   if (sectorErase && !flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());
-  if (!flash.writeAnything(pagePos, (uint8_t) 0, configData)) showErrorMsg(flash.error()+10);
+  if (!flash.writeAnything(pagePos, (uint8_t) 0, configData)) showErrorMsg(flash.error());
   pagePos++;
-  if (!flash.writeAnything(pagePos, (uint8_t) 0, songData)) showErrorMsg(flash.error()+20);
+  if (!flash.writeAnything(pagePos, (uint8_t) 0, songData)) showErrorMsg(flash.error());
   pagePos += 15;
   //
   for (byte p = 0; p < 64; p ++)
   {
     if (sectorErase && !flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());
-    if (!flash.writeAnything(pagePos, (uint8_t) 0, patternData)) showErrorMsg(flash.error()+30);
+    if (!flash.writeAnything(pagePos, (uint8_t) 0, patternData)) showErrorMsg(flash.error());
     pagePos++;
-    if (!flash.writeAnything(pagePos, (uint8_t) 0, stepsData)) showErrorMsg(flash.error()+40);
+    if (!flash.writeAnything(pagePos, (uint8_t) 0, stepsData)) showErrorMsg(flash.error());
     pagePos += 15;
     porc++;
     if (songOnly) showWaitMsg(porc * 2); else showWaitMsg(byte(porc / 20));

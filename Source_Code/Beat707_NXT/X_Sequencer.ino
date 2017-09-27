@@ -44,6 +44,35 @@ void doTickSequencer()
         }
       }
     }
+    // Check Solo and Mute Tracks //
+    if (hasSoloTrack)
+    {
+      if (prevSoloTrack != patternData.soloTrack)
+      {
+        for (byte x=0; x<(NOTE_TRACKS+DRUM_TRACKS+1); x++)
+        {
+          if (bitRead(prevSoloTrack, x) != bitRead(patternData.soloTrack, x) && bitRead(patternData.soloTrack, x) == 0)
+          {
+            if (x >= NOTE_TRACKS) stopDrumTrackPrevNote(x - NOTE_TRACKS, true); else stopDrumTrackPrevNote(x, false);
+          }
+        }
+        prevSoloTrack = patternData.soloTrack;
+      }
+    }
+    else
+    {
+      if (prevMuteTrack != patternData.muteTrack)
+      {
+        for (byte x=0; x<(NOTE_TRACKS+DRUM_TRACKS+1); x++)
+        {
+          if (bitRead(prevMuteTrack, x) != bitRead(patternData.muteTrack, x) && bitRead(patternData.muteTrack, x) == 1)
+          {
+            if (x >= NOTE_TRACKS) stopDrumTrackPrevNote(x - NOTE_TRACKS, true); else stopDrumTrackPrevNote(x, false);
+          }
+        }
+        prevMuteTrack = patternData.muteTrack;
+      }
+    }
     //
     if (seqCounter == 0 || seqCounter == 12)
     {      
@@ -230,16 +259,29 @@ void resetSequencer()
   //
   for (byte x=0; x<DRUM_TRACKS; x++)
   {
-    sendMidiEvent(midiNoteOff, configData.trackNote[x], 0, configData.trackMidiCH[x]);
+    stopDrumTrackPrevNote(x, true);
   }
   //
   for (byte x=0; x<NOTE_TRACKS; x++)
   {
-    if (prevPlayedNote[x] > 0)
+    stopDrumTrackPrevNote(x, false);
+  }
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void stopDrumTrackPrevNote(byte track, bool isDrumTrack)
+{
+  if (isDrumTrack)
+  {
+    sendMidiEvent(midiNoteOff, configData.trackNote[track], 0, configData.trackMidiCH[track]);
+  }
+  else
+  {
+    if (prevPlayedNote[track] > 0)
     {
-      sendMidiEvent(midiNoteOff, prevPlayedNote[x], 0, configData.trackMidiCH[DRUM_TRACKS+x]);
-      prevPlayedNote[x] = 0;
-    }
+      sendMidiEvent(midiNoteOff, prevPlayedNote[track], 0, configData.trackMidiCH[DRUM_TRACKS+track]);
+      prevPlayedNote[track] = 0;
+    } 
   }
 }
 
@@ -294,15 +336,15 @@ void stopSequencer(void)
   resetSequencer();
   MIDIallNotesOff();
   //
-  startTimer();
-  updateScreen = true;
-  //
-  checkIfDataNeedsSaving();
+  checkIfDataNeedsSaving();  
   if (streamNextPattern)
   {
     streamNextPattern = false;
     loadPatternNow = true;
   }
+  //
+  startTimer();
+  updateScreen = true;  
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
