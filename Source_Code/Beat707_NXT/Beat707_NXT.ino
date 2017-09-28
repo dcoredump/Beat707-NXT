@@ -11,6 +11,7 @@
 #define DRUM_TRACKS 16
 #define NOTE_TRACKS 8
 #define SONG_POSITIONS 64
+#define PATTERNS 64
 #define ECHOS 6
 #define SONGS 28
 #define STEPS 16

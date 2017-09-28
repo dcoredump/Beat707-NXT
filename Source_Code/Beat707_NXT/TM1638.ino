@@ -134,7 +134,7 @@ void readButtons(void)
   {
     for (byte i = 0; i < 3; i++)
     {
-      if (bitRead(buttons[i], x) && (!ignoreButtons || (i == 0 && x <= 1)))
+      if (bitRead(buttons[i], x) && (!ignoreButtons || (i == 0 && x <= 1 && curRightScreen != kMuteSoloMenu) || (i == 2 && x == 7 && curRightScreen == kMuteSoloMenu)))
       {
         if (buttonDownTime[i][x] < BUTTON_HOLD) buttonDownTime[i][x]++;
         if ((buttonDownTime[i][x] >= BUTTON_HOLD && !bitRead(buttonEventWasHolding[i], x)) ||

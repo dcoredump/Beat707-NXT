@@ -31,7 +31,7 @@
 void flashInit(bool force)
 {
   if (!flash.begin(FLASH_CHIPSIZE)) { showErrorMsg(127); }
-  delay(999);
+  delay(80);
   if (!flash.readAnything(0, (uint8_t) 0, flashHeader)) showErrorMsg(flash.error());
   //
   #if DEBUG_SERIAL
@@ -113,7 +113,7 @@ void initSong(byte song, bool sectorErase, int &porc, bool songOnly)
   if (!flash.writeAnything(pagePos, (uint8_t) 0, songData)) showErrorMsg(flash.error());
   pagePos += 15;
   //
-  for (byte p = 0; p < 64; p ++)
+  for (byte p = 0; p < PATTERNS; p ++)
   {
     if (sectorErase && !flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());
     if (!flash.writeAnything(pagePos, (uint8_t) 0, patternData)) showErrorMsg(flash.error());

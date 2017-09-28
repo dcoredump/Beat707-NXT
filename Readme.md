@@ -20,7 +20,7 @@ MIDI Groove Sequencer
 - 16 Steps on screen, plus ABCD variations for a total of 64 steps.
 - Double Steps (in between steps option when editing the steps). Steps are 1/16 and Double-Steps are 1/32.
 - MIDI Processor Per Track. EG: Fade In, Fade Out, Fade InOut, Fade OutInt, Random Velocity and more.
-- Song Mode with 99 positions. Each with Pattern Number and Options: ABCD var and repeat 0 to 15 (4 bits each).
+- Song Mode with 64 positions. Each with Pattern Number and Options: ABCD var and repeat 0 to 15 (4 bits each).
 - Echo option with the following options: track selector, number of 96 PPQ ticks, space in 96 PPQ ticks, Attach or Decay Velocity and the option to select when the echo happens: on all notes, max or lower forced velocity notes.
 - Mute and Solo mode for live performance.
 - Simple Hardware design, based on the easy to find TM1638 IC based boards. Just search on eBay and you should be able to find several options. We used 3 boards that has 8 x buttons, 8 x LEDs and 8 x LED_Segments. The board uses a single ATmega328 running at 3.3V, one FLASH chip for storage and connections for the TM1638 boards.
@@ -112,16 +112,32 @@ Hold Button #5 and Press Button #6, from the first board on the left.
            Solo Mute Mode
 ```
 
+--------------------------------------------------------------------------------
+
 Solo Mute Interface Overview 
 ----------------------------
 
 ```
   1 2 3 4 5 6 7 8    1 2 3 4 5 6 7 8  1 2 3 4 5 6 7 8
   ---------------    ---------------  ---------------
-  { Note Tracks }    {         Drum Tracks         }Play / Stop (hold to exit Solo Mute Mode)
+  { Note Tracks }    {         Drum Tracks         }Play / Stop (hold for Pattern Menu)
 ```
 
-- Press buttons to Mute/UnMute and Hold for Solo. The last button on the right is for Play/Stop, hold it to exit the Solo Mute Mode.
+- Press buttons to Mute/UnMute and Hold for Solo. The last button on the right is for Play/Stop, hold it to open up a Pattern Menu.
+
+--------------------------------------------------------------------------------
+
+Solo Mute Pattern Menu
+----------------------
+
+```
+  1 2 3 4 5 6 7 8    1 2 3 4 5 6 7 8  1 2 3 4 5 6 7 8
+  ---------------    ---------------  ---------------
+  { Pattern Bank}    {Pattern Numbr}  P   N   Close P
+									  r   e         l
+									  e   x         a
+									  v   t         y/Stop
+```
 
 --------------------------------------------------------------------------------
 
