@@ -124,8 +124,6 @@ struct WPATTERN //
   byte trackProcessor[DRUM_TRACKS+NOTE_TRACKS]; 
   byte lastNote[NOTE_TRACKS];
   WECHO echoConfig[ECHOS];
-  uint32_t muteTrack;
-  uint32_t soloTrack;
   //
   void init()
   {
@@ -133,7 +131,6 @@ struct WPATTERN //
     memset(trackProcessor, 0, sizeof(trackProcessor));
     memset(lastNote, 0, sizeof(lastNote));
     totalVariations = 4;
-    muteTrack = soloTrack = 0;
   }
 };
 //
@@ -145,6 +142,8 @@ struct WCONFIG
   byte accentValues[3] = { 80, 100, 127 };
   byte BPM = 120;
   boolean seqSyncOut = false;
+  uint32_t muteTrack;
+  uint32_t soloTrack; 
 };
 //
 struct WSONG
@@ -199,6 +198,7 @@ void reset()
   for (byte x = 0; x < 8; x++) { configData.trackMidiCH[DRUM_TRACKS + x] = 1 + x; }
   bitSet(patternBitsSelector,0);
   bitSet(patternBitsSelector,8);
+  configData.muteTrack = configData.soloTrack = 0;
   //
   songData.init();
   for (byte x=0; x < 4; x++) 

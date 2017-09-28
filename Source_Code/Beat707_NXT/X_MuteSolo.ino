@@ -42,12 +42,12 @@ void createScreenMuteSolo()
         if (i == 2 && x == 7) break;
         if (hasSoloTrack)
         {
-          if (bitRead(patternData.soloTrack, x + (i *8)) == 1) segments[i][x] = S_S; else segments[i][x] = S__;
-          if (bitRead(patternData.muteTrack, x + (i *8)) == 0) segments[i][x] |= B10000000;
+          if (bitRead(configData.soloTrack, x + (i *8)) == 1) segments[i][x] = S_S; else segments[i][x] = S__;
+          if (bitRead(configData.muteTrack, x + (i *8)) == 0) segments[i][x] |= B10000000;
         }
         else
         {
-          if (bitRead(patternData.muteTrack, x + (i *8)) == 1) segments[i][x] = S__; else segments[i][x] = S_N;
+          if (bitRead(configData.muteTrack, x + (i *8)) == 1) segments[i][x] = S__; else segments[i][x] = S_N;
         }
       }
     }
@@ -110,14 +110,14 @@ void checkInterfaceMuteSolo()
           }
           else
           {
-            somethingChangedPattern = true;
+            somethingChangedConfig = true;
             if (buttonEvent[i][x] == kButtonClicked)
             {
-              if (bitRead(patternData.muteTrack, x + (i *8)) == 1) bitClear(patternData.muteTrack, x + (i *8)); else bitSet(patternData.muteTrack, x + (i *8));
+              if (bitRead(configData.muteTrack, x + (i *8)) == 1) bitClear(configData.muteTrack, x + (i *8)); else bitSet(configData.muteTrack, x + (i *8));
             }
             else if (buttonEvent[i][x] == kButtonHold)
             {
-              if (bitRead(patternData.soloTrack, x + (i *8)) == 1) bitClear(patternData.soloTrack, x + (i *8)); else bitSet(patternData.soloTrack, x + (i *8));
+              if (bitRead(configData.soloTrack, x + (i *8)) == 1) bitClear(configData.soloTrack, x + (i *8)); else bitSet(configData.soloTrack, x + (i *8));
               checkSoloTracks();
             }
           }
@@ -136,7 +136,7 @@ void checkSoloTracks()
   hasSoloTrack = false;
   for (byte x=0; x<(NOTE_TRACKS + DRUM_TRACKS - 1); x++)
   {
-    if (bitRead(patternData.soloTrack, x) == 1) 
+    if (bitRead(configData.soloTrack, x) == 1) 
     {
       hasSoloTrack = true;
       break;

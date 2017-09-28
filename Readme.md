@@ -22,7 +22,7 @@ MIDI Groove Sequencer
 - MIDI Processor Per Track. EG: Fade In, Fade Out, Fade InOut, Fade OutInt, Random Velocity and more.
 - Song Mode with 64 positions. Each with Pattern Number and Options: ABCD var and repeat 0 to 15 (4 bits each).
 - Echo option with the following options: track selector, number of 96 PPQ ticks, space in 96 PPQ ticks, Attach or Decay Velocity and the option to select when the echo happens: on all notes, max or lower forced velocity notes.
-- Mute and Solo mode for live performance.
+- Mute and Solo mode for live performance with pattern selection (settings are saved per song, not pattern).
 - Simple Hardware design, based on the easy to find TM1638 IC based boards. Just search on eBay and you should be able to find several options. We used 3 boards that has 8 x buttons, 8 x LEDs and 8 x LED_Segments. The board uses a single ATmega328 running at 3.3V, one FLASH chip for storage and connections for the TM1638 boards.
 - MIDI Input and Output, with Clock Send and Receive (Slave mode too).
 
@@ -134,9 +134,9 @@ Solo Mute Pattern Menu
   1 2 3 4 5 6 7 8    1 2 3 4 5 6 7 8  1 2 3 4 5 6 7 8
   ---------------    ---------------  ---------------
   { Pattern Bank}    {Pattern Numbr}  P   N   Close P
-									  r   e         l
-									  e   x         a
-									  v   t         y/Stop
+                                      r   e         l
+                                      e   x         a
+                                      v   t         y/Stop
 ```
 
 --------------------------------------------------------------------------------

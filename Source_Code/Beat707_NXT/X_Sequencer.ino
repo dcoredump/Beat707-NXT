@@ -47,30 +47,30 @@ void doTickSequencer()
     // Check Solo and Mute Tracks //
     if (hasSoloTrack)
     {
-      if (prevSoloTrack != patternData.soloTrack)
+      if (prevSoloTrack != configData.soloTrack)
       {
         for (byte x=0; x<(NOTE_TRACKS+DRUM_TRACKS+1); x++)
         {
-          if (bitRead(prevSoloTrack, x) != bitRead(patternData.soloTrack, x) && bitRead(patternData.soloTrack, x) == 0)
+          if (bitRead(prevSoloTrack, x) != bitRead(configData.soloTrack, x) && bitRead(configData.soloTrack, x) == 0)
           {
             if (x >= NOTE_TRACKS) stopDrumTrackPrevNote(x - NOTE_TRACKS, true); else stopDrumTrackPrevNote(x, false);
           }
         }
-        prevSoloTrack = patternData.soloTrack;
+        prevSoloTrack = configData.soloTrack;
       }
     }
     else
     {
-      if (prevMuteTrack != patternData.muteTrack)
+      if (prevMuteTrack != configData.muteTrack)
       {
         for (byte x=0; x<(NOTE_TRACKS+DRUM_TRACKS+1); x++)
         {
-          if (bitRead(prevMuteTrack, x) != bitRead(patternData.muteTrack, x) && bitRead(patternData.muteTrack, x) == 1)
+          if (bitRead(prevMuteTrack, x) != bitRead(configData.muteTrack, x) && bitRead(configData.muteTrack, x) == 1)
           {
             if (x >= NOTE_TRACKS) stopDrumTrackPrevNote(x - NOTE_TRACKS, true); else stopDrumTrackPrevNote(x, false);
           }
         }
-        prevMuteTrack = patternData.muteTrack;
+        prevMuteTrack = configData.muteTrack;
       }
     }
     //
@@ -87,8 +87,8 @@ void doTickSequencer()
       //
       for (byte x=0; x<(DRUM_TRACKS-1); x++)
       {
-        if ((hasSoloTrack && bitRead(patternData.soloTrack, NOTE_TRACKS + x) == 1) ||
-        (!hasSoloTrack && bitRead(patternData.muteTrack, NOTE_TRACKS + x) != 1))
+        if ((hasSoloTrack && bitRead(configData.soloTrack, NOTE_TRACKS + x) == 1) ||
+        (!hasSoloTrack && bitRead(configData.muteTrack, NOTE_TRACKS + x) != 1))
         {
           byte xc = bitRead(stepsData[seqPosition].steps[x], 1 + (variation * 2)) << 1;
           xc |= bitRead(stepsData[seqPosition].steps[x], 0 + (variation * 2));
@@ -129,8 +129,8 @@ void doTickSequencer()
       //
       for (byte x=0; x<(NOTE_TRACKS-1); x++)
       {
-        if ((hasSoloTrack && bitRead(patternData.soloTrack, x) == 1) ||
-        (!hasSoloTrack && bitRead(patternData.muteTrack, x) != 1))
+        if ((hasSoloTrack && bitRead(configData.soloTrack, x) == 1) ||
+        (!hasSoloTrack && bitRead(configData.muteTrack, x) != 1))
         {
           byte xvel = bitRead(stepsData[seqPosition].noteStepsExtras[x][0], 1 + (variation * 2)) << 1;
           xvel |= bitRead(stepsData[seqPosition].noteStepsExtras[x][0], 0 + (variation * 2));
