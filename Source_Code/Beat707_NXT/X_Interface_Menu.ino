@@ -68,7 +68,8 @@ void showMenu()
 {
   switch(menuPosition)
   {
-    case 0: segments[2][0] = S_N;
+    case menuMidiCC: 
+            segments[2][0] = S_N;
             segments[2][1] = S_N;
             segments[2][2] = S_C;
             segments[2][3] = S_H;
@@ -77,7 +78,8 @@ void showMenu()
               else printDashDash(2, 6);
     break;
     //
-    case 1: segments[1][4] = S_N;
+    case menuNote:
+            segments[1][4] = S_N;
             segments[1][5] = S_O;
             segments[1][6] = S_T;
             segments[1][7] = S_E;
@@ -90,9 +92,10 @@ void showMenu()
             else printDashDash(2, 6);
     break;
     //
-    case 2: 
-    case 3:
-    case 4: segments[1][0] = S_A;
+    case menuAccent1: 
+    case menuAccent2:
+    case menuAccent3: 
+            segments[1][0] = S_A;
             segments[1][1] = S_C;
             segments[1][2] = S_C;
             segments[1][3] = S_E;
@@ -100,12 +103,13 @@ void showMenu()
             segments[1][5] = S_T;
             //
             segments[2][0] = S_U;
-            segments[2][1] = (char)pgm_read_word(&numbers[menuPosition-2+1]);
+            segments[2][1] = (char)pgm_read_word(&numbers[menuPosition-menuAccent1+1]);
             //
-            printNumber(2, 4, configData.accentValues[menuPosition-2]);
+            printNumber(2, 4, configData.accentValues[menuPosition-menuAccent1]);
     break;
     //
-    case 5: segments[1][0] = S_P;
+    case menuProc:
+            segments[1][0] = S_P;
             segments[1][1] = S_R;
             segments[1][2] = S_O;
             segments[1][3] = S_C;
@@ -192,22 +196,22 @@ void showMenu()
             else printDashDash(2, 6);
     break;
     //
-    case 6: 
-    case 7:
-    case 8:
-    case 9: 
-    case 10:
-    case 11:
+    case menuEcho:
+    case menuEchoTrack:
+    case menuEchoTicks:
+    case menuEchoSpace:
+    case menuEchoAttackDecay:
+    case menuEchoType:
             segments[1][4] = S_E;
             segments[1][5] = S_C;
             segments[1][6] = S_H;
             segments[1][7] = S_O;
             //
-            if (menuPosition == 6)
+            if (menuPosition == menuEcho)
             {
               printNumber(2, 5, echoEdit+1);
             }
-            else if (menuPosition == 7)
+            else if (menuPosition == menuEchoTrack)
             {
               segments[2][0] = S_T;
               segments[2][1] = S_R;
@@ -215,7 +219,7 @@ void showMenu()
               segments[2][3] = S_C;
               if (patternData.echoConfig[echoEdit].track == 0) printDashDash(2, 6); else printNumber(2, 5, patternData.echoConfig[echoEdit].track);
             }
-            else if (menuPosition == 8)
+            else if (menuPosition == menuEchoTicks)
             {
               segments[2][0] = S_T;
               segments[2][1] = S_I;
@@ -223,7 +227,7 @@ void showMenu()
               segments[2][3] = S_S;
               if (patternData.echoConfig[echoEdit].track == 0) printDashDash(2, 6); else printNumber(2, 5, patternData.echoConfig[echoEdit].ticks);
             }
-            else if (menuPosition == 9)
+            else if (menuPosition == menuEchoSpace)
             {
               segments[2][0] = S_S;
               segments[2][1] = S_P;
@@ -231,7 +235,7 @@ void showMenu()
               segments[2][3] = S_C;
               if (patternData.echoConfig[echoEdit].track == 0) printDashDash(2, 6); else printNumber(2, 5, patternData.echoConfig[echoEdit].space);
             }
-            else if (menuPosition == 10)
+            else if (menuPosition == menuEchoAttackDecay)
             {
               if (patternData.echoConfig[echoEdit].attackDecay > 0)
               {
@@ -257,7 +261,7 @@ void showMenu()
                 printDashDash(2, 6);
               }
             }
-            else if (menuPosition == 11)
+            else if (menuPosition == menuEchoType)
             {
               if (patternData.echoConfig[echoEdit].track == 0) 
               {
@@ -305,7 +309,8 @@ void showMenu()
             }
     break;
     //
-    case 12: segments[2][0] = S_U;
+    case menuVariationsABCD:
+            segments[2][0] = S_U;
             segments[2][1] = S_A;
             segments[2][2] = S_R;
             //
@@ -315,7 +320,8 @@ void showMenu()
             if (patternData.totalVariations >= 4) segments[2][7] = S_d;
     break;
     //
-    case 13: segments[1][0] = S_S;
+    case menuSyncOut:
+            segments[1][0] = S_S;
             segments[1][1] = S_Y;
             segments[1][2] = S_N;
             segments[1][3] = S_C;
@@ -336,7 +342,51 @@ void showMenu()
             }
     break;
     //
-    case 14: segments[2][0] = S_S;
+    case menuSysex:
+            segments[1][0] = S_S;
+            segments[1][1] = S_Y;
+            segments[1][2] = S_S;
+            segments[1][3] = S_E;
+            segments[1][4] = S_X;
+            //
+            if (songSysExDump == -2)
+            {
+              printDashDash(1, 6);
+            }
+            else if (songSysExDump == -1)
+            {
+              segments[1][5] = S_A;
+              segments[1][6] = S_L;
+              segments[1][7] = S_L;
+            }
+            else
+            {
+              printNumber(1, 5, songSysExDump + 1);
+              segments[1][4] = S_X;
+            }
+            //
+            if (sysExDump == 0)
+            {
+              segments[2][0] = S_d;
+              segments[2][1] = S_U;
+              segments[2][2] = S_N;
+              segments[2][3] = S_N;
+              segments[2][4] = S_P;
+            }
+            else if (sysExDump == 1)
+            {
+              segments[2][0] = S_R;
+              segments[2][1] = S_E;
+              segments[2][2] = S_C;
+              segments[2][3] = S_E;
+              segments[2][4] = S_I;
+              segments[2][5] = S_U;
+              segments[2][6] = S_E;
+            }
+    break;
+    //
+    case menuSong: 
+            segments[2][0] = S_S;
             segments[2][1] = S_O;
             segments[2][2] = S_N;
             segments[2][3] = S_G;
@@ -344,7 +394,8 @@ void showMenu()
             printNumber(2, 5, currentSong + 1);
     break;
     //
-    case 15: segments[1][4] = S_I;
+    case menuInit:
+            segments[1][4] = S_I;
             segments[1][5] = S_N;
             segments[1][6] = S_I;
             segments[1][7] = S_T;
@@ -371,7 +422,8 @@ void showMenu()
             }
     break;
     //
-    case 16: segments[1][1] = S_T;
+    case menuToSongMode:
+            segments[1][1] = S_T;
             segments[1][2] = S_O;
             //
             segments[1][4] = S_S;
@@ -389,17 +441,68 @@ void showMenu()
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void processMenuOK()
+{
+  switch(menuPosition)
+  {
+    case menuSysex:
+      if (seqPlaying) printStopSequencer();
+      else
+      {
+        if (sysExDump == 0) sysexDump(songSysExDump); else sysexReceive(songSysExDump);
+      }
+    break;
+    //
+    case menuInit:
+      if (seqPlaying) printStopSequencer();
+      else
+      {
+        if (initMode == 1)
+        {
+          stopSequencer();
+          reset();
+          int porc = 0;
+          initSong(currentSong, true, porc, true);
+          loadSong(currentSong);
+          checkMenuClose();
+        }
+        else if (initMode == 2)
+        {
+          stopSequencer();
+          reset();
+          currentSong = 0;
+          flashInit(true);
+          checkMenuClose();
+        }
+        else checkMenuClose();
+      }
+    break;
+    // 
+    case menuToSongMode:
+      if (seqPlaying) printStopSequencer();
+      else
+      {
+        checkIfDataNeedsSaving();
+        //
+        currentMode = songMode;
+        songPosition = 0;
+      }
+    break;
+  }
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void processMenu(char value)
 {
   switch(menuPosition)
   {
-    case 0:
+    case menuMidiCC:
       if (value > 0 && configData.trackMidiCH[curTrack] < 15) configData.trackMidiCH[curTrack]++;
       else if (value < 0 && configData.trackMidiCH[curTrack] > 0) configData.trackMidiCH[curTrack]--;
       somethingChangedConfig = true;
     break;
     //
-    case 1:
+    case menuNote:
       if (curTrack < DRUM_TRACKS)
       {
         if (value > 0 && configData.trackNote[curTrack] < 127) configData.trackNote[curTrack]++;
@@ -408,69 +511,75 @@ void processMenu(char value)
       }
     break;
     //
-    case 2:
-    case 3:
-    case 4:
-        if (value > 0 && configData.accentValues[menuPosition-2] < 127) configData.accentValues[menuPosition-2]++;
-          else if (value < 1 && configData.accentValues[menuPosition-2] > 0) configData.accentValues[menuPosition-2]--;
+    case menuAccent1:
+    case menuAccent2:
+    case menuAccent3:
+        if (value > 0 && configData.accentValues[menuPosition-menuAccent1] < 127) configData.accentValues[menuPosition-menuAccent1]++;
+          else if (value < 1 && configData.accentValues[menuPosition-menuAccent1] > 0) configData.accentValues[menuPosition-menuAccent1]--;
         somethingChangedConfig = true;
     break;
     //
-    case 5:
+    case menuProc:
         if (value > 0 && patternData.trackProcessor[curTrack] < 7) patternData.trackProcessor[curTrack]++;
           else if (value < 1 && patternData.trackProcessor[curTrack] > 0) patternData.trackProcessor[curTrack]--;
         somethingChangedPattern = true;
     break;
     //
-    case 6:
+    case menuEcho:
         if (value > 0 && echoEdit < (ECHOS-1)) echoEdit++;
           else if (value < 1 && echoEdit > 0) echoEdit--;
         somethingChangedPattern = true;
     break;
     //
-    case 7:
+    case menuEchoTrack:
         if (value > 0 && patternData.echoConfig[echoEdit].track < (DRUM_TRACKS-1)) patternData.echoConfig[echoEdit].track++;
           else if (value < 1 && patternData.echoConfig[echoEdit].track > 0) patternData.echoConfig[echoEdit].track--;
         somethingChangedPattern = true;
     break;
     //
-    case 8:
+    case menuEchoTicks:
         if (value > 0 && patternData.echoConfig[echoEdit].ticks < 127) patternData.echoConfig[echoEdit].ticks++;
           else if (value < 1 && patternData.echoConfig[echoEdit].ticks > 0) patternData.echoConfig[echoEdit].ticks--;
         somethingChangedPattern = true;
     break;
     //
-    case 9:
+    case menuEchoSpace:
         if (value > 0 && patternData.echoConfig[echoEdit].space < 127) patternData.echoConfig[echoEdit].space++;
           else if (value < 1 && patternData.echoConfig[echoEdit].space > 0) patternData.echoConfig[echoEdit].space--;
         somethingChangedPattern = true;
     break;
     //
-    case 10:
+    case menuEchoAttackDecay:
         if (value > 0 && patternData.echoConfig[echoEdit].attackDecay < 127) patternData.echoConfig[echoEdit].attackDecay++;
           else if (value < 1 && patternData.echoConfig[echoEdit].attackDecay > -127) patternData.echoConfig[echoEdit].attackDecay--;
         somethingChangedPattern = true;
     break;  
     //
-    case 11:
+    case menuEchoType:
         if (value > 0 && patternData.echoConfig[echoEdit].type <= 1) patternData.echoConfig[echoEdit].type++;
           else if (value < 1 && patternData.echoConfig[echoEdit].type > 0) patternData.echoConfig[echoEdit].type--;
         somethingChangedPattern = true;
     break;  
     //
-    case 12:
+    case menuVariationsABCD:
         if (value > 0 && patternData.totalVariations < 4) patternData.totalVariations++;
           else if (value < 1 && patternData.totalVariations > 1) patternData.totalVariations--;
         somethingChangedPattern = true;
     break;
     //
-    case 13:
+    case menuSyncOut:
       configData.seqSyncOut = !configData.seqSyncOut;
       somethingChangedConfig = true;
     break;
     //
-    case 14:
-      if (!seqPlaying)
+    case menuSysex:
+        if (value > 0 && songSysExDump < (SONGS-1)) songSysExDump++;
+          else if (value < 1 && songSysExDump > -2) songSysExDump--;
+    break;
+    //
+    case menuSong:
+      if (seqPlaying) printStopSequencer();
+      else
       {
         checkIfDataNeedsSaving();
         //
@@ -482,19 +591,13 @@ void processMenu(char value)
       }
     break;
     //
-    case 15:
+    case menuInit:
       if (value > 0 && initMode < 2) initMode++;
       else if (value < 1 && initMode > 0) initMode--;
     break;    
     //
-    case 16:
-      if (!seqPlaying)
-      {
-        checkIfDataNeedsSaving();
-        //
-        currentMode = songMode;
-        songPosition = 0;
-      }
+    case menuToSongMode: 
+        processMenuOK();
     break;
   }
 }

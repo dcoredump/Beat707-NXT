@@ -239,6 +239,7 @@ void printNumber(byte segment, byte offset, int number)
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //                  XGFEDCBA
+#define S_X        B01000100
 #define S_R        B01110100
 #define S_DASH     B01000000
 #define S_S        B01101101
@@ -268,7 +269,8 @@ void printNumber(byte segment, byte offset, int number)
 const byte stepChars[4] PROGMEM = { B00000000, B00001000, B01010100, B00110111 };
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-void showErrorMsg(byte error)
+void showErrorMsg(byte error) { showErrorMsg(error, false); }
+void showErrorMsg(byte error, bool errors)
 {
   memset(segments, 0, sizeof(segments));
   segments[2][0] = S_E;
@@ -277,8 +279,10 @@ void showErrorMsg(byte error)
   segments[2][3] = S_o;
   segments[2][4] = S_r;
   printNumber(2, 5, error);
+  if (errors) segments[2][5] = S_S;
   sendScreen();
-  delay(4000);
+  if (totalFlashErrors < 0xFF) totalFlashErrors++;
+  delay(2000);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -325,4 +329,3 @@ void printMIDInote(byte note, byte segment, byte offset, byte offsetOctave)
   if (xn >= 10) xn = 9;
   segments[segment][offsetOctave] = (char)pgm_read_word(&numbers[xn]);
 }
-

@@ -30,13 +30,10 @@
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void flashInit(bool force)
 {
+  totalFlashErrors = 0;
   if (!flash.begin(FLASH_CHIPSIZE)) { showErrorMsg(127); }
   delay(80);
   if (!flash.readAnything(0, (uint8_t) 0, flashHeader)) showErrorMsg(flash.error());
-  //
-  #if DEBUG_SERIAL
-    Serial.println(flashHeader);
-  #endif  
   //
   byte lastSong = flashHeader[6];
   if (flashHeader[0] != 'B' || flashHeader[1] != '7' || flashHeader[2] != '0' || flashHeader[3] != '7' || flashHeader[4] != 'V' || flashHeader[5] != FLASH_VERSION) showErrorMsg(99);
@@ -47,11 +44,16 @@ void flashInit(bool force)
   //
   if (force)
   {
+    stopTimer();
     showWaitMsg(-1);
+    delay(2000);
     lastSong = 0;
-    //bool sectorErase = false;
-    //if (!flash.eraseChip()) sectorErase = true;
-    bool sectorErase = true;
+    #if INIT_ENTIRE_FLASH
+      bool sectorErase = false;
+      if (!flash.eraseChip()) sectorErase = true;
+    #else
+      bool sectorErase = true;
+    #endif
     int porc = 0;
     //
     // Start Saving Songs/Patterns //
@@ -85,6 +87,15 @@ void flashInit(bool force)
     #endif  
     //    
     if (flashHeader[0] != 'B' || flashHeader[1] != '7' || flashHeader[2] != '0' || flashHeader[3] != '7' || flashHeader[4] != 'V' || flashHeader[5] != FLASH_VERSION) showErrorMsg(98);
+    //
+    if (totalFlashErrors > 0)
+    {
+      showErrorMsg(totalFlashErrors, true);
+      delay(4000);
+      totalFlashErrors = 0;
+    }
+    //
+    startTimer();
   }
   //
   loadSong(lastSong);

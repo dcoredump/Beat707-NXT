@@ -92,7 +92,6 @@ bool SPIFlash::_startSPIBus(void)
 bool SPIFlash::_beginSPI(uint8_t opcode)
 {
   if (!SPIBusState) {
-    //Serial.println("Starting SPI Bus");
     _startSPIBus();
   }
   CHIP_SELECT

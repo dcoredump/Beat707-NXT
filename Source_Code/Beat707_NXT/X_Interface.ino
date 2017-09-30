@@ -533,26 +533,13 @@ void checkInterface()
     //
     if (leButton >= 0)
     {
-      if (curRightScreen == kRightMenu && menuPosition == initMenu)
+      if (curRightScreen == kRightMenu && (menuPosition == menuInit || menuPosition == menuToSongMode || menuPosition == menuSysex))
       {
-        if (initMode == 1)
+        if (menuPosition == menuSysex && leButton != 15)
         {
-          stopSequencer();
-          reset();
-          int porc = 0;
-          initSong(currentSong, true, porc, true);
-          loadSong(currentSong);
-          checkMenuClose();
+          if (sysExDump == 0) sysExDump = 1; else sysExDump = 0;
         }
-        else if (initMode == 2)
-        {
-          stopSequencer();
-          reset();
-          currentSong = 0;
-          flashInit(true);
-          checkMenuClose();
-        }
-        else checkMenuClose();
+        else processMenuOK();
       }
       else if (curRightScreen == kRightTrackSelection ||  curRightScreen == kRightMenu)
       {
@@ -644,7 +631,7 @@ void checkInterface()
     {
       menuPosition++;
       initMode = 0;
-      if (menuPosition > lastMenu) menuPosition = 0;
+      if (menuPosition > lastMenu) menuPosition = menuFirst;
     }
     else if (forceAccent)
     {
@@ -689,7 +676,7 @@ void checkInterface()
   {
     if (curRightScreen == kRightMenu)
     {
-      if (menuPosition > 0) menuPosition--;
+      if (menuPosition > menuFirst) menuPosition--;
       else menuPosition = lastMenu;
       initMode = 0;
     }    
@@ -738,10 +725,40 @@ void clearStepsExtrasBits(byte thestep, byte xVar)
   bitClear(stepsData[thestep].noteStepsExtras[curTrack-DRUM_TRACKS][0], (editVariation * 2) + 1);
   bitClear(stepsData[thestep].noteStepsExtras[curTrack-DRUM_TRACKS][1], (editVariation * 2));
   bitClear(stepsData[thestep].noteStepsExtras[curTrack-DRUM_TRACKS][1], (editVariation * 2) + 1);
-}  
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void sendScreenAndWait(byte seconds)
+{
+  sendScreen();
+  delay(seconds * 1000);
+  updateScreen = true;
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void resetSegments(byte xs, byte xe)
 {
   for (byte xx = xs; xx <= xe; xx++) { memset(segments[xx], 0, sizeof(segments[0])); }
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void printStopSequencer()
+{
+  leds[0] = leds[1] = leds[2] = 0;
+  resetSegments(1, 2);
+  segments[1][4] = S_S;
+  segments[1][5] = S_T;
+  segments[1][6] = S_O;
+  segments[1][7] = S_P;
+  //
+  segments[2][0] = S_S;
+  segments[2][1] = S_E;
+  segments[2][2] = S_O;
+  segments[2][3] = S_U;
+  segments[2][4] = S_E;
+  segments[2][5] = S_N;
+  segments[2][6] = S_C;
+  segments[2][7] = S_R;
+  //
+  sendScreenAndWait(2);
 }

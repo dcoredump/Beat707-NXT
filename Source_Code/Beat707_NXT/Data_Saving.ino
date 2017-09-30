@@ -17,9 +17,9 @@ void checkIfDataNeedsSaving()
     if (!flash.writeAnything(pagePos, (uint8_t) 0, stepsData)) showErrorMsg(flash.error());    
   }
   // -------=========---------- //
-  if (somethingChangedConfig || somethingChangedSong)
+  if (somethingChangedConfig)
   {
-    somethingChangedConfig = somethingChangedSong = false;
+    somethingChangedConfig = false;
     uint16_t pagePos = 16 + (currentSong * ((64 * 16) + 16));
     if (!flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());
     if (!flash.writeAnything(pagePos, (uint8_t) 0, configData)) showErrorMsg(flash.error());

@@ -1,6 +1,11 @@
 /*
  * 
+ * Beat707 NXT - Works with 3 x TM1638 boards connected in paralel
  * Created by William Kalfelz @ Beat707 (c) 2017 - http://www.Beat707.com
+ * 
+ * https://github.com/Beat707/Beat707-NXT
+ * 
+ * Version 1.0.0 - Sep 28 2017
  * 
  */
 
@@ -8,16 +13,18 @@
 #include "X_Lib_Flash.h"
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#define DRUM_TRACKS 16
-#define NOTE_TRACKS 8
-#define SONG_POSITIONS 64
-#define PATTERNS 64
-#define ECHOS 6
-#define SONGS 28
-#define STEPS 16
-#define INIT_FLASH_MEMORY 0
-#define SHOW_FREE_RAM 0
-#define DEBUG_SERIAL 0
+#define DRUM_TRACKS 16        // This can't go above 16
+#define NOTE_TRACKS 8         // This can't go above 8
+#define SONG_POSITIONS 64     // Depends on RAM left, can't go above 99
+#define PATTERNS 64           // This can't go above 64
+#define ECHOS 6               // Depends on RAM left, usually can't go above 9
+#define SONGS 30              // 30 songs should be the MAX that the Winbond chip can take
+#define STEPS 16              // This can't go above 16
+#define INIT_FLASH_MEMORY 0   // Warning, this will erase the entire flash contents
+#define INIT_ENTIRE_FLASH 1   // When selected with the above, the entire flash chip will be erased first. This takes around 20 seconds or less to perform before we can write data to the flash chip. If this is not set, the code will erase the flash chip by sector, which takes a bit more time to perform.
+#define SHOW_FREE_RAM 0       // Will show how much RAM is left on the display during initiation
+#define DEBUG_SERIAL 0        // Sets the serial output to 9600 bauds and sends some debuging information out.
+#define MIDI_OVER_USB 0       // When set will use 38400 bauds for the Serial interface
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 enum
@@ -29,7 +36,9 @@ enum
   patternMode = 0, songMode,
   accentTrack = (DRUM_TRACKS-1),
   echoTypeOnAllNotes = 0, echoTypeForceMaxVelocity, echoTypeForceLowVelocity,
-  procFadeMin = 4, lastMenu = 16, initMenu = 15,
+  procFadeMin = 4, 
+  menuFirst = 0, menuMidiCC = 0, menuNote, menuAccent1, menuAccent2, menuAccent3, menuProc, menuEcho, menuEchoTrack, menuEchoTicks,
+  menuEchoSpace, menuEchoAttackDecay, menuEchoType, menuVariationsABCD, menuSyncOut, menuSong, menuSysex, menuInit, menuToSongMode, lastMenu = menuToSongMode, 
   kLeftMain = 0
 };
 
@@ -65,7 +74,6 @@ byte ppq24Counter = 0;
 byte midiClockBeats = 0;
 bool somethingChangedPattern = false; // if true saves the pattern (steps, double steps, midi processor and variations)
 bool somethingChangedConfig = false; // if true saves the config data (BPM, track Note #, track MIDI CC, SeqSyncOut)
-bool somethingChangedSong = false;
 bool streamNextPattern = false;
 bool loadPatternNow = false;
 byte ignoreButtons = false;
@@ -80,15 +88,19 @@ byte songPosition = 0;
 byte initMode = 0;
 bool changedSong = false;
 char flashHeader[8];
+char songSysExDump = -2;
+byte sysExDump = 0;
 bool hasSoloTrack = false;
+uint32_t prevMuteTrack = 0;
+uint32_t prevSoloTrack = 0xFFFFFFFF;
+byte totalFlashErrors = 0;
+//
 byte echoCounter[ECHOS][2];
 byte echoVelocity[ECHOS];
 byte echoTrack[ECHOS];
 char echoAttackDecay[ECHOS];
 byte echoSpace[ECHOS];
 byte echoEdit = 0;
-uint32_t prevMuteTrack = 0;
-uint32_t prevSoloTrack = 0xFFFFFFFF;
 //
 struct WECHO
 {
@@ -124,6 +136,7 @@ struct WPATTERN //
   byte trackProcessor[DRUM_TRACKS+NOTE_TRACKS]; 
   byte lastNote[NOTE_TRACKS];
   WECHO echoConfig[ECHOS];
+  bool hasInit = true; // Used by the SysEx code
   //
   void init()
   {
@@ -137,7 +150,7 @@ struct WPATTERN //
 struct WCONFIG
 {
   char header = 'C';
-  byte trackNote[DRUM_TRACKS] { 36, 40, 42, 44, 46, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58 };
+  byte trackNote[DRUM_TRACKS] { 36, 40, 42, 44, 46, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 0 };
   byte trackMidiCH[DRUM_TRACKS+NOTE_TRACKS]; // 0~15 
   byte accentValues[3] = { 80, 100, 127 };
   byte BPM = 120;
@@ -150,6 +163,7 @@ struct WSONG
 {
   byte pattern[2][SONG_POSITIONS]; // Pattern Number and Options: ABCD var and repeat 0 to 15 (4 bits each)
   char loopTo;
+  bool hasInit = true; // Used by the SysEx code
   void init()
   {
     memset(pattern, 0, sizeof(pattern));
@@ -166,7 +180,7 @@ WSONG songData;
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void setup() 
 {
-  startMIDIinterface(false);
+  startMIDIinterface();
   initTM1638();
   reset();
   #if SHOW_FREE_RAM
@@ -195,7 +209,7 @@ void reset()
   memset(prevPlayedNote, 0, sizeof(prevPlayedNote));
   memset(echoCounter, 0, sizeof(echoCounter));
   memset(echoVelocity, 0, sizeof(echoVelocity));
-  for (byte x = 0; x < 8; x++) { configData.trackMidiCH[DRUM_TRACKS + x] = 1 + x; }
+  for (byte x = 0; x < 8; x++) { configData.trackMidiCH[DRUM_TRACKS + x] = x; }
   bitSet(patternBitsSelector,0);
   bitSet(patternBitsSelector,8);
   configData.muteTrack = configData.soloTrack = 0;

@@ -367,13 +367,17 @@ void sendMidiEvent(byte type, byte byte1, byte byte2, byte channel)
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-void startMIDIinterface(boolean overUSB)
+void startMIDIinterface()
 {
   #if DEBUG_SERIAL
     Serial.begin(9600);
     Serial.println("Startup");
   #else
-    if (overUSB) Serial.begin(38400); else Serial.begin(31250); // 31250 MIDI Interface //
+    #if MIDI_OVER_USB 
+      Serial.begin(38400); 
+    #else 
+      Serial.begin(31250); // 31250 MIDI Interface //
+    #endif
     Serial.flush();
     resetSequencer();
     MIDIallNotesOff();
