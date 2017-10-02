@@ -35,7 +35,7 @@ void processMenuCopyPaste(byte button)
   if (button >= 4 && button <= 7) // Copy
   {
     uint16_t pagePos = 16 + (SONGS * ((64 * 16) + 16));
-    if (!flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());
+    eraseSector(pagePos);
     if (!flash.writeAnything(pagePos, (uint8_t) 0, patternData)) showErrorMsg(flash.error());
     pagePos++;
     if (!flash.writeAnything(pagePos, (uint8_t) 0, stepsData)) showErrorMsg(flash.error());

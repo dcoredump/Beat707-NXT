@@ -10,29 +10,52 @@ void checkIfDataNeedsSaving()
   if (somethingChangedPattern)
   {
     somethingChangedPattern = false;
-    uint16_t pagePos = 16 + (currentSong * ((64 * 16) + 16)) + (currentPattern * 16) + 16;
-    if (!flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());
-    if (!flash.writeAnything(pagePos, (uint8_t) 0, patternData)) showErrorMsg(flash.error());   
-    pagePos++;
-    if (!flash.writeAnything(pagePos, (uint8_t) 0, stepsData)) showErrorMsg(flash.error());    
+    savePatternData(true);
+    saveStepsData();
   }
   // -------=========---------- //
   if (somethingChangedConfig)
   {
     somethingChangedConfig = false;
-    uint16_t pagePos = 16 + (currentSong * ((64 * 16) + 16));
-    if (!flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());
-    if (!flash.writeAnything(pagePos, (uint8_t) 0, configData)) showErrorMsg(flash.error());
-    pagePos++;
-    if (!flash.writeAnything(pagePos, (uint8_t) 0, songData)) showErrorMsg(flash.error());
+    saveConfigData(true);
+    saveSongData();
   }
   //
   if (changedSong)
   {
     changedSong = false;
-    createFlashHeader(currentSong);
-    if (!flash.eraseSector(0, 0)) showErrorMsg(flash.error());
-    if (!flash.writeAnything(0, (uint8_t) 0, flashHeader)) showErrorMsg(flash.error());    
+    saveHeader(currentSong, true);
   }
 }
 
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void eraseSector(uint16_t pagePos)
+{
+  if (!flash.eraseSector(pagePos, 0)) showErrorMsg(flash.error());  
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void saveConfigData(byte _eraseSector)
+{
+  if (_eraseSector) eraseSector(16 + (currentSong * ((64 * 16) + 16)));
+  if (!flash.writeAnything(16 + (currentSong * ((64 * 16) + 16)), (uint8_t) 0, configData)) showErrorMsg(flash.error());  
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void saveSongData()
+{
+  if (!flash.writeAnything(16 + 1 + (currentSong * ((64 * 16) + 16)), (uint8_t) 0, songData)) showErrorMsg(flash.error());
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void savePatternData(byte _eraseSector)
+{
+  if (_eraseSector) eraseSector(16 + (currentSong * ((64 * 16) + 16)) + (currentPattern * 16) + 16);
+  if (!flash.writeAnything(16 + (currentSong * ((64 * 16) + 16)) + (currentPattern * 16) + 16, (uint8_t) 0, patternData)) showErrorMsg(flash.error());   
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void saveStepsData()
+{
+  if (!flash.writeAnything(16 + 1 + (currentSong * ((64 * 16) + 16)) + (currentPattern * 16) + 16, (uint8_t) 0, stepsData)) showErrorMsg(flash.error());
+}

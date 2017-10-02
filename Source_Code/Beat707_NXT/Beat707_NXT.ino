@@ -149,14 +149,43 @@ struct WPATTERN //
 //
 struct WCONFIG
 {
-  char header = 'C';
-  byte trackNote[DRUM_TRACKS] { 36, 40, 42, 44, 46, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 0 };
+  byte trackNote[DRUM_TRACKS];
   byte trackMidiCH[DRUM_TRACKS+NOTE_TRACKS]; // 0~15 
-  byte accentValues[3] = { 80, 100, 127 };
-  byte BPM = 120;
-  boolean seqSyncOut = false;
+  byte accentValues[3];
+  byte BPM;
+  boolean seqSyncOut;
   uint32_t muteTrack;
-  uint32_t soloTrack; 
+  uint32_t soloTrack;
+  bool hasInit = true; // Used by the SysEx code
+  //
+  void init()
+  {
+    trackNote[0] = 36;
+    trackNote[1] = 40;
+    trackNote[2] = 42;
+    trackNote[3] = 44;
+    trackNote[4] = 46;
+    trackNote[5] = 48;
+    trackNote[6] = 49;
+    trackNote[7] = 50;
+    trackNote[8] = 51;
+    trackNote[9] = 52;
+    trackNote[10] = 53;
+    trackNote[11] = 54;
+    trackNote[12] = 55;
+    trackNote[13] = 56;
+    trackNote[14] = 57;
+    trackNote[15] = 0;
+    //
+    memset(trackMidiCH, 9, sizeof(trackMidiCH));
+    for (byte x = 0; x < 8; x++) { trackMidiCH[DRUM_TRACKS+x] = x; }
+    muteTrack = soloTrack = 0;
+    BPM = 120;
+    seqSyncOut = false;
+    accentValues[0] = 80;
+    accentValues[1] = 100;
+    accentValues[2] = 127;
+  }
 };
 //
 struct WSONG
@@ -164,6 +193,7 @@ struct WSONG
   byte pattern[2][SONG_POSITIONS]; // Pattern Number and Options: ABCD var and repeat 0 to 15 (4 bits each)
   char loopTo;
   bool hasInit = true; // Used by the SysEx code
+  //
   void init()
   {
     memset(pattern, 0, sizeof(pattern));
@@ -205,16 +235,20 @@ void reset()
   memset(buttons, 0, sizeof(buttons));  
   memset(buttonEvent, 0, sizeof(buttonEvent));
   memset(buttonDownTime, 0, sizeof(buttonDownTime));
-  memset(configData.trackMidiCH, 9, sizeof(configData.trackMidiCH));
   memset(prevPlayedNote, 0, sizeof(prevPlayedNote));
   memset(echoCounter, 0, sizeof(echoCounter));
   memset(echoVelocity, 0, sizeof(echoVelocity));
-  for (byte x = 0; x < 8; x++) { configData.trackMidiCH[DRUM_TRACKS + x] = x; }
+  configData.init();
   bitSet(patternBitsSelector,0);
   bitSet(patternBitsSelector,8);
-  configData.muteTrack = configData.soloTrack = 0;
   //
   songData.init();
+  resetPattern();
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void resetPattern()
+{
   for (byte x=0; x < 4; x++) 
   { 
     stepsData[0 + (x*4)].init(); 
@@ -228,7 +262,7 @@ void reset()
     stepsData[3 + (x*4)].steps[15] = B10101010;
     
   }
-  patternData.init();
+  patternData.init();  
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
