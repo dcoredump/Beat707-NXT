@@ -245,7 +245,8 @@ void sysexReceive(char song)
     {
       eraseSector(pagePos);
       pagePos += 16;
-    } 
+      updatePorc(1);
+    }
   }
   //
   memset(leds, 0, sizeof(leds));
@@ -283,6 +284,7 @@ void sysexReceive(char song)
    * SysEx End: 0xF7
    */
   //
+  porc = 0;
   emptySerialInput();
   if (serialNextByte() != 0xF0)
   {
@@ -368,7 +370,7 @@ void sysexReceive(char song)
     if (configData.hasInit != 0x27)
     {
       reset();
-      saveConfigData(true);
+      saveConfigData(false);
       saveSongData();
     }
     if (songData.hasInit != 0x27)
@@ -384,7 +386,7 @@ void sysexReceive(char song)
       if (patternData.hasInit != 0x27)
       {
         resetPattern();
-        savePatternData(true);
+        savePatternData(false);
         saveStepsData();
       }
       //
