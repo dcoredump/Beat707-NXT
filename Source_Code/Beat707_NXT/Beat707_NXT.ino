@@ -136,7 +136,7 @@ struct WPATTERN //
   byte trackProcessor[DRUM_TRACKS+NOTE_TRACKS]; 
   byte lastNote[NOTE_TRACKS];
   WECHO echoConfig[ECHOS];
-  bool hasInit = true; // Used by the SysEx code
+  byte hasInit; // Used by the SysEx code
   //
   void init()
   {
@@ -144,6 +144,7 @@ struct WPATTERN //
     memset(trackProcessor, 0, sizeof(trackProcessor));
     memset(lastNote, 0, sizeof(lastNote));
     totalVariations = 4;
+    hasInit = 0x27;
   }
 };
 //
@@ -156,7 +157,7 @@ struct WCONFIG
   boolean seqSyncOut;
   uint32_t muteTrack;
   uint32_t soloTrack;
-  bool hasInit = true; // Used by the SysEx code
+  byte hasInit; // Used by the SysEx code
   //
   void init()
   {
@@ -181,6 +182,7 @@ struct WCONFIG
     for (byte x = 0; x < 8; x++) { trackMidiCH[DRUM_TRACKS+x] = x; }
     muteTrack = soloTrack = 0;
     BPM = 120;
+    hasInit = 0x27;
     seqSyncOut = false;
     accentValues[0] = 80;
     accentValues[1] = 100;
@@ -192,13 +194,14 @@ struct WSONG
 {
   byte pattern[2][SONG_POSITIONS]; // Pattern Number and Options: ABCD var and repeat 0 to 15 (4 bits each)
   char loopTo;
-  bool hasInit = true; // Used by the SysEx code
+  byte hasInit; // Used by the SysEx code
   //
   void init()
   {
     memset(pattern, 0, sizeof(pattern));
     loopTo = -1; // No Loop //
     for (byte x=0; x < SONG_POSITIONS; x++) { pattern[1][x] = 4 << 4; }
+    hasInit = 0x27;
   }
 };
 //

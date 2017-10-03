@@ -67,7 +67,8 @@ byte receive4BitsBytes()
   }
   else
   {
-    xreturn = (serialNextByte() << 4) & serialNextByte();
+    xreturn = (serialNextByte() << 4);
+    xreturn |= serialNextByte();
     if (xreturn == 0)
     {
       zeroCounterReceive = serialNextByte() - 1;
@@ -247,8 +248,6 @@ void sysexReceive(char song)
     } 
   }
   //
-  Serial.flush();
-  //
   memset(leds, 0, sizeof(leds));
   resetSegments(0, 2);
   segments[2][0] = S_R;
@@ -284,14 +283,21 @@ void sysexReceive(char song)
    * SysEx End: 0xF7
    */
   //
-  while (serialNextByte() != 0xF0) { ; }
+  emptySerialInput();
+  if (serialNextByte() != 0xF0)
+  {
+    showErrorMsg(18);
+    emptySerialInput();
+    goto finish;
+  }
   //
   if (serialNextByte() != 0x01 ||
       serialNextByte() != 0x02 ||
       serialNextByte() != 0x28)
   {
-    while (serialNextByte() != 0xF7) { ; }
-    showErrorMsg(88);
+    showErrorMsg(28);
+    emptySerialInput();
+    goto finish;   
   }
   else
   {
@@ -299,36 +305,43 @@ void sysexReceive(char song)
     if ((xType == 0x08 && song != -1) || (xType == 0x04 && song == -1))
     {
       while (serialNextByte() != 0xF7) { ; }
-      showErrorMsg(88);
+      showErrorMsg(38);
     }
   }
   //
+  updatePorc(1);
   for (byte x = 0; x < nSongs; x++) // songs
   {
     currentSong = songSelect;
     currentPattern = 0;
     songSelect++;
     //
-    if (serialNextByte() == 12)
+    if (serialNextByte() == 0x12)
     {
       for (int xd = 0; xd < sizeof(configData); xd++) { ((byte*)&configData)[xd] = receive4BitsBytes(); }
       saveConfigData(false);
       //
-      if (serialNextByte() == 16)
+      if (serialNextByte() == 0x16)
       {
         for (int xd = 0; xd < sizeof(songData); xd++) { ((byte*)&songData)[xd] = receive4BitsBytes(); }
         saveSongData();
       }
       //
-      for (byte p = 0; p < PATTERNS; p ++)
+      for (byte p = 0; p < PATTERNS; p++)
       {
-        if (serialNextByte() == 22)
+        byte xTemp = serialNextByte();
+        if (xTemp == 0x22)
         {
           currentPattern = p;
           for (int xd = 0; xd < sizeof(patternData); xd++) { ((byte*)&patternData)[xd] = receive4BitsBytes(); }
           savePatternData(false);
           for (int xd = 0; xd < sizeof(stepsData); xd++) { ((byte*)&stepsData)[xd] = receive4BitsBytes(); }
           saveStepsData();
+        }
+        else if (xTemp != 0x18)
+        {
+          showErrorMsg(98);
+          goto finish;
         }
         //
         updatePorc(1);
@@ -339,41 +352,53 @@ void sysexReceive(char song)
       updatePorc(64); // Empty Song //
     }
   }
-  if (serialNextByte() != 0x24) showErrorMsg(88);
-  if (serialNextByte() != 0xF7) showErrorMsg(88);
+  if (serialNextByte() != 0x24) showErrorMsg(48);
+  if (serialNextByte() != 0xF7) showErrorMsg(58);
   //
-  // Now Check All Memory Spaces that were not saved (bool hasInit = false) and INIT those spaces //
+  // Now Check All Memory Spaces that were not saved (hasInit != 0x27) and INIT those spaces //
   songSelect = 0;
+  porc = 0;
   if (song >= 0) songSelect = song;
   //
   for (byte x = 0; x < nSongs; x++) // songs
   {
     loadSong(songSelect);
     songSelect++;
-    if (configData.hasInit == false)
+    //
+    if (configData.hasInit != 0x27)
     {
       reset();
-      saveConfigData(false);
+      saveConfigData(true);
+      saveSongData();
+    }
+    if (songData.hasInit != 0x27)
+    {
+      songData.init();
+      saveConfigData(true);
       saveSongData();
     }
     //
     for (byte p = 0; p < PATTERNS; p ++)
     {
       loadPattern(p);
-      if (patternData.hasInit == false)
+      if (patternData.hasInit != 0x27)
       {
         resetPattern();
-        savePatternData(false);
+        savePatternData(true);
         saveStepsData();
       }
+      //
+      updatePorc(1);
     }
   }
   //
   loadSong(prevSong);
   loadPattern(prevPattern);
-  saveHeader(prevSong, false);
-  showWaitMsg(-1);
-  startTimer();
+  saveHeader(prevSong, true);
+  //
+  finish:
+    showWaitMsg(-1);
+    startTimer();
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -381,4 +406,13 @@ byte serialNextByte()
 {
   while (Serial.available() == 0) { ; }
   return Serial.read();
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void emptySerialInput()
+{
+  while (Serial.available() > 0)
+  {
+    Serial.read();
+  }
 }
